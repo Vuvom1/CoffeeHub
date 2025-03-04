@@ -17,6 +17,18 @@ public class CoffeeHubContext : DbContext
     public DbSet<Employee> Employees { get; set; }
     public DbSet<Customer> Customers { get; set; }  
     public DbSet<Promotion> Promotions { get; set; }
+    public DbSet<MenuItem> MenuItems { get; set; }
+    public DbSet<MenuItemCategory> MenuItemCategories { get; set; }
+    public DbSet<Schedule> Schedules { get; set; }
+    public DbSet<Shift> Shifts { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderDetail> OrderDetails { get; set; }
+    public DbSet<Invoice> Invoices { get; set; }
+    public DbSet<Recipe> Recipes { get; set; }
+    public DbSet<Ingredient> Ingredients { get; set; }
+    public DbSet<IngredientStock> IngredientStocks { get; set; }    
+    public DbSet<IngredientCategory> IngredientCategories { get; set; }
+    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,6 +38,19 @@ public class CoffeeHubContext : DbContext
         modelBuilder.ApplyConfiguration(new AdminConfig());
         modelBuilder.ApplyConfiguration(new EmployeeConfig());
         modelBuilder.ApplyConfiguration(new CustomerConfig());
+        modelBuilder.ApplyConfiguration(new PromotionConfig());
+        modelBuilder.ApplyConfiguration(new MenuItemConfig());
+        modelBuilder.ApplyConfiguration(new MenuItemCategoryConfig());
+        modelBuilder.ApplyConfiguration(new ScheduleConfig());
+        modelBuilder.ApplyConfiguration(new ShiftConfig());
+        modelBuilder.ApplyConfiguration(new OrderConfig());
+        modelBuilder.ApplyConfiguration(new OrderDetailConfig());
+        modelBuilder.ApplyConfiguration(new InvoiceConfig());
+        modelBuilder.ApplyConfiguration(new RecipeConfig());
+        modelBuilder.ApplyConfiguration(new IngredientConfig());
+        modelBuilder.ApplyConfiguration(new IngredientStockConfig());
+        modelBuilder.ApplyConfiguration(new IngredientCategoryConfig());
+        
 
         modelBuilder.Entity<Auth>().Property(e => e.Role).HasConversion<int>();
 

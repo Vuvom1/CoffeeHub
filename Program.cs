@@ -23,10 +23,28 @@ builder.Services.AddDbContext<CoffeeHubContext>(options => options.UseSqlServer(
 
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IAdminService, AdminService>();
+
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+
 builder.Services.AddScoped<IPromotionRepository, PromotionRepository>();
 builder.Services.AddScoped<IPromotionService, PromotionService>();
+
+builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
+builder.Services.AddScoped<IMenuItemService, MenuItemService>();
+
+builder.Services.AddScoped<IMenuItemCategoryRepository, MenuItemCategoryRepository>();
+builder.Services.AddScoped<IMenuItemCategoryService, MenuItemCategoryService>();
+
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+
+
+
+
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 

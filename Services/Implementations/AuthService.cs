@@ -17,7 +17,6 @@ public class AuthService : BaseService<Auth>, IAuthService
     {
         _authRepository = authRepository;
         _configuration = configuration;
-
     }
 
     public async Task<Auth> Register(Auth auth, string password)

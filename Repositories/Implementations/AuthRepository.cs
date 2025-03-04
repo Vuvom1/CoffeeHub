@@ -8,13 +8,9 @@ using CoffeeHub.Repositories.Interfaces;
 
 namespace CoffeeHub.Repositories.Implementations;
 
-public class AuthRepository : BaseRepository<Auth>, IAuthRepository
+public class AuthRepository(CoffeeHubContext coffeeHubContext) : BaseRepository<Auth>(coffeeHubContext), IAuthRepository
 {
-    private new readonly CoffeeHubContext _context;
-    public AuthRepository(CoffeeHubContext coffeeHubContext) : base(coffeeHubContext)
-    {
-        _context = coffeeHubContext;
-    }
+    private new readonly CoffeeHubContext _context = coffeeHubContext;
 
     public async Task<Auth> Login(string username, string password)
     {

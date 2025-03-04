@@ -8,7 +8,14 @@ public class IngredientStock : BaseEntity
     public decimal Quantity { get; set; }
     public string UnitOfMeasurement { get; set; } = null!;
     public decimal CostPrice { get; set; }
+    public DateTime PurchaseDate { get; set; }
     public DateOnly ExpiryDate { get; set; }
-    public int RemainingStock { get; set; }
+    public decimal RemainingStock { get; set; }
     public virtual Ingredient Ingredient { get; set; } = null!;
+
+    public IngredientStock()
+    {
+        RemainingStock = Quantity;
+        PurchaseDate = DateTime.Now;
+    }
 }

@@ -1,4 +1,5 @@
 using System;
+using CoffeeHub.Models.Domains;
 
 namespace CoffeeHub.Models;
 
@@ -9,6 +10,8 @@ public class MenuItem : BaseEntity
     public string Description { get; set; } = null!;
     public string ImageUrl { get; set; } = null!;
     public bool IsAvailable { get; set; }
-    public long CategoryId { get; set; }
-    // public virtual Category Category { get; set; } = null!;
+    public long? MenuItemCategoryId { get; set; }
+    public virtual MenuItemCategory MenuItemCategory { get; set; } = null!;
+    public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new HashSet<OrderDetail>();
+    public virtual ICollection<Recipe> Recipes { get; set; } = new HashSet<Recipe>();
 }

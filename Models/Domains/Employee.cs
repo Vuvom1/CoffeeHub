@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using CoffeeHub.Models.Domains;
 
 namespace CoffeeHub.Models;
 
@@ -15,4 +16,6 @@ public class Employee : BaseEntity
     public long? AuthId { get; set; }
     public virtual Auth Auth { get; set; } = null!;
     public virtual ICollection<Schedule> Schedules { get; set; } = new HashSet<Schedule>();
+    public virtual ICollection<Shift> Shifts { get; set; } = new HashSet<Shift>();
+    public virtual ICollection<Order> Orders { get; set; } = new HashSet<Order>();
 }

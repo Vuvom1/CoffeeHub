@@ -1,50 +1,41 @@
 using System;
 using CoffeeHub.Models.Domains;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CoffeeHub.Data.DataConfig;
 
-public class PromotionConfig
+public class PromotionConfig : IEntityTypeConfiguration<Promotion>
 {
-    public static void Configure(ModelBuilder modelBuilder)
+    public void Configure(EntityTypeBuilder<Promotion> builder)
     {
-        modelBuilder.Entity<Promotion>(entity =>
-        {
-            entity.ToTable("Promotions");
+        builder.HasKey(p => p.Id);
 
-            entity.HasKey(e => e.Id);
+        builder.Property(p => p.Name)
+            .IsRequired()
+            .HasMaxLength(50);
 
-            entity.Property(e => e.Id)
-                .ValueGeneratedOnAdd();
+        builder.Property(p => p.Description)
+            .HasMaxLength(200);
 
-            entity.Property(e => e.Code)
-                .IsRequired()
-                .HasMaxLength(50);
+        builder.Property(p => p.DiscountValue)
+            .IsRequired()
+            .HasColumnType("decimal(5, 2)");
 
-            entity.Property(e => e.Description)
-                .IsRequired()
-                .HasMaxLength(500);
+        builder.Property(p => p.StartDate)
+            .IsRequired()
+            .HasColumnType("date");
 
-            entity.Property(e => e.DiscountValue)
-                .IsRequired();
+        builder.Property(p => p.EndDate)
+            .IsRequired()
+            .HasColumnType("date");
 
-            entity.Property(e => e.StartDate)
-                .IsRequired();
+        builder.Property(p => p.IsActive)
+            .IsRequired()
+            .HasDefaultValue(true);
 
-            entity.Property(e => e.EndDate)
-                .IsRequired();
-
-            entity.Property(e => e.IsActive)
-                .IsRequired();
-
-            entity.Property(e => e.CreatedAt)
-                .IsRequired();
-
-            entity.Property(e => e.UpdatedAt)
-                .IsRequired();
-
-            entity.HasIndex(e => e.Code)
-                .IsUnique();
-        });
+        builder.HasMany(p => p.Invoices)
+            .WithOne(i => i.Promotion)
+            .HasForeignKey(i => i.PromotionId);
     }
 }

@@ -4,13 +4,7 @@ using CoffeeHub.Repositories.Interfaces;
 
 namespace CoffeeHub.Repositories.Implementations;
 
-public class AdminRepository : BaseRepository<Admin>, IAdminRepository
+public class AdminRepository(CoffeeHubContext context) : BaseRepository<Admin>(context), IAdminRepository
 {
-    private new readonly CoffeeHubContext _context;
-    public AdminRepository(CoffeeHubContext context) : base(context)
-    {
-        _context = context;
-    }
-
-    
+    private new readonly CoffeeHubContext _context = context;
 }

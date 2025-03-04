@@ -17,5 +17,5 @@ public class Promotion : BaseEntity
     public DateOnly StartDate { get; set; }
     public DateOnly EndDate { get; set; }
     public bool IsActive { get; set; } = true;
-    public virtual ICollection<MenuItem> PromotionMenuItems { get; set; } = new HashSet<MenuItem>();
+    public virtual ICollection<Invoice> Invoices { get; set; } = new HashSet<Invoice>();
 }

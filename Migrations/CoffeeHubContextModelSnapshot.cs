@@ -214,6 +214,233 @@ namespace CoffeeHub.Migrations
                     b.ToTable("Customers");
                 });
 
+            modelBuilder.Entity("CoffeeHub.Models.Domains.Ingredient", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("IngredientCategoryId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("UnitOfMeasurement")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IngredientCategoryId");
+
+                    b.ToTable("Ingredients");
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.Domains.IngredientCategory", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IngredientCategories", (string)null);
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.Domains.IngredientStock", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<decimal>("CostPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateOnly>("ExpiryDate")
+                        .HasColumnType("date");
+
+                    b.Property<long>("IngredientId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("PurchaseDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("RemainingStock")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("UnitOfMeasurement")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IngredientId");
+
+                    b.ToTable("IngredientStocks");
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.Domains.Invoice", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("DiscountAmount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(18,2)")
+                        .HasDefaultValue(0m);
+
+                    b.Property<decimal>("FinalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("InvoiceNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<long>("OrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("PromotionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.HasIndex("PromotionId");
+
+                    b.ToTable("Invoices");
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.Domains.MenuItemCategory", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MenuItemCategories", (string)null);
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.Domains.Order", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("Id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("CustomerId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("CustomerId");
+
+                    b.Property<long?>("EmployeeId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("EmployeeId");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("OrderDate");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Status");
+
+                    b.Property<int>("TotalQuantity")
+                        .HasColumnType("int")
+                        .HasColumnName("TotalQuantity");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("Orders", (string)null);
+                });
+
             modelBuilder.Entity("CoffeeHub.Models.Domains.Promotion", b =>
                 {
                     b.Property<long>("Id")
@@ -229,16 +456,19 @@ namespace CoffeeHub.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<decimal>("DiscountValue")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(5, 2)");
 
                     b.Property<DateOnly>("EndDate")
                         .HasColumnType("date");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<decimal>("MaxDiscountAmount")
                         .HasColumnType("decimal(18,2)");
@@ -247,7 +477,9 @@ namespace CoffeeHub.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("PromotionType")
                         .HasColumnType("int");
@@ -267,6 +499,42 @@ namespace CoffeeHub.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Promotions");
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.Domains.Recipe", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("IngredientId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("MenuItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("UnitOfMeasurement")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IngredientId");
+
+                    b.HasIndex("MenuItemId");
+
+                    b.ToTable("Recipes", (string)null);
                 });
 
             modelBuilder.Entity("CoffeeHub.Models.Employee", b =>
@@ -329,41 +597,79 @@ namespace CoffeeHub.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("CategoryId")
-                        .HasColumnType("bigint");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
 
+                    b.Property<long?>("MenuItemCategoryId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<long?>("PromotionId")
-                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PromotionId");
+                    b.HasIndex("MenuItemCategoryId");
 
-                    b.ToTable("MenuItem");
+                    b.ToTable("MenuItems", (string)null);
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.OrderDetail", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("MenuItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("OrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(5, 2)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MenuItemId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderDetails");
                 });
 
             modelBuilder.Entity("CoffeeHub.Models.Schedule", b =>
@@ -390,10 +696,7 @@ namespace CoffeeHub.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ShiftId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("ShiftId1")
+                    b.Property<long>("ShiftId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -403,9 +706,9 @@ namespace CoffeeHub.Migrations
 
                     b.HasIndex("EmployeeId1");
 
-                    b.HasIndex("ShiftId1");
+                    b.HasIndex("ShiftId");
 
-                    b.ToTable("Schedule");
+                    b.ToTable("Schedules", (string)null);
                 });
 
             modelBuilder.Entity("CoffeeHub.Models.Shift", b =>
@@ -418,6 +721,9 @@ namespace CoffeeHub.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<long?>("EmployeeId")
+                        .HasColumnType("bigint");
 
                     b.Property<TimeSpan>("EndTime")
                         .HasColumnType("time");
@@ -434,7 +740,9 @@ namespace CoffeeHub.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Shift");
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("Shifts", (string)null);
                 });
 
             modelBuilder.Entity("CoffeeHub.Models.Auth", b =>
@@ -458,11 +766,107 @@ namespace CoffeeHub.Migrations
                     b.Navigation("Employee");
                 });
 
+            modelBuilder.Entity("CoffeeHub.Models.Domains.Ingredient", b =>
+                {
+                    b.HasOne("CoffeeHub.Models.Domains.IngredientCategory", "IngredientCategory")
+                        .WithMany("Ingredients")
+                        .HasForeignKey("IngredientCategoryId");
+
+                    b.Navigation("IngredientCategory");
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.Domains.IngredientStock", b =>
+                {
+                    b.HasOne("CoffeeHub.Models.Domains.Ingredient", "Ingredient")
+                        .WithMany("IngredientStocks")
+                        .HasForeignKey("IngredientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ingredient");
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.Domains.Invoice", b =>
+                {
+                    b.HasOne("CoffeeHub.Models.Domains.Order", "Order")
+                        .WithOne("Invoice")
+                        .HasForeignKey("CoffeeHub.Models.Domains.Invoice", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Invoices_Orders");
+
+                    b.HasOne("CoffeeHub.Models.Domains.Promotion", "Promotion")
+                        .WithMany("Invoices")
+                        .HasForeignKey("PromotionId");
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Promotion");
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.Domains.Order", b =>
+                {
+                    b.HasOne("CoffeeHub.Models.Customer", "Customer")
+                        .WithMany("Orders")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CoffeeHub.Models.Employee", "Employee")
+                        .WithMany("Orders")
+                        .HasForeignKey("EmployeeId");
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.Domains.Recipe", b =>
+                {
+                    b.HasOne("CoffeeHub.Models.Domains.Ingredient", "Ingredient")
+                        .WithMany("Recipes")
+                        .HasForeignKey("IngredientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CoffeeHub.Models.MenuItem", "MenuItem")
+                        .WithMany("Recipes")
+                        .HasForeignKey("MenuItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ingredient");
+
+                    b.Navigation("MenuItem");
+                });
+
             modelBuilder.Entity("CoffeeHub.Models.MenuItem", b =>
                 {
-                    b.HasOne("CoffeeHub.Models.Domains.Promotion", null)
-                        .WithMany("PromotionMenuItems")
-                        .HasForeignKey("PromotionId");
+                    b.HasOne("CoffeeHub.Models.Domains.MenuItemCategory", "MenuItemCategory")
+                        .WithMany("MenuItems")
+                        .HasForeignKey("MenuItemCategoryId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("MenuItemCategory");
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.OrderDetail", b =>
+                {
+                    b.HasOne("CoffeeHub.Models.MenuItem", "MenuItem")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("MenuItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CoffeeHub.Models.Domains.Order", "Order")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MenuItem");
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("CoffeeHub.Models.Schedule", b =>
@@ -475,13 +879,20 @@ namespace CoffeeHub.Migrations
 
                     b.HasOne("CoffeeHub.Models.Shift", "Shift")
                         .WithMany("Schedules")
-                        .HasForeignKey("ShiftId1")
+                        .HasForeignKey("ShiftId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Employee");
 
                     b.Navigation("Shift");
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.Shift", b =>
+                {
+                    b.HasOne("CoffeeHub.Models.Employee", null)
+                        .WithMany("Shifts")
+                        .HasForeignKey("EmployeeId");
                 });
 
             modelBuilder.Entity("CoffeeHub.Models.Admin", b =>
@@ -494,11 +905,38 @@ namespace CoffeeHub.Migrations
                 {
                     b.Navigation("Auth")
                         .IsRequired();
+
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.Domains.Ingredient", b =>
+                {
+                    b.Navigation("IngredientStocks");
+
+                    b.Navigation("Recipes");
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.Domains.IngredientCategory", b =>
+                {
+                    b.Navigation("Ingredients");
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.Domains.MenuItemCategory", b =>
+                {
+                    b.Navigation("MenuItems");
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.Domains.Order", b =>
+                {
+                    b.Navigation("Invoice")
+                        .IsRequired();
+
+                    b.Navigation("OrderDetails");
                 });
 
             modelBuilder.Entity("CoffeeHub.Models.Domains.Promotion", b =>
                 {
-                    b.Navigation("PromotionMenuItems");
+                    b.Navigation("Invoices");
                 });
 
             modelBuilder.Entity("CoffeeHub.Models.Employee", b =>
@@ -506,7 +944,18 @@ namespace CoffeeHub.Migrations
                     b.Navigation("Auth")
                         .IsRequired();
 
+                    b.Navigation("Orders");
+
                     b.Navigation("Schedules");
+
+                    b.Navigation("Shifts");
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.MenuItem", b =>
+                {
+                    b.Navigation("OrderDetails");
+
+                    b.Navigation("Recipes");
                 });
 
             modelBuilder.Entity("CoffeeHub.Models.Shift", b =>
