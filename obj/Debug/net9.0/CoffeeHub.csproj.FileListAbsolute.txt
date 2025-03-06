@@ -277,3 +277,5 @@
 /Users/minhvuvo/Documents/GitHub/CoffeeHub/obj/Debug/net9.0/ref/CoffeeHub.dll
 /Users/minhvuvo/Documents/GitHub/CoffeeHub/bin/Debug/net9.0/AutoMapper.dll
 /Users/minhvuvo/Documents/GitHub/CoffeeHub/bin/Debug/net9.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/Users/minhvuvo/Documents/GitHub/CoffeeHub/bin/Debug/net9.0/package-lock.json
+/Users/minhvuvo/Documents/GitHub/CoffeeHub/bin/Debug/net9.0/package.json

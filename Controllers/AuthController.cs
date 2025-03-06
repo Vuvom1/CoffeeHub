@@ -35,12 +35,12 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromQuery] LoginDto loginDto)
+    public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
         var user = await _authService.Login(loginDto.Username, loginDto.Password);
         if (user == null)
         {
-            return Unauthorized(new { message = "Invalid username or password" });
+            return Unauthorized("Invalid username or password");
         }
 
         var token = _authService.GenerateJwtToken(user);

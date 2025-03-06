@@ -10,6 +10,8 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using CoffeeHub.Repositories.Interfaces;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,8 +44,8 @@ builder.Services.AddScoped<IMenuItemCategoryService, MenuItemCategoryService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 
-
-
+builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -80,6 +82,11 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromFile("path/to/your/firebase-adminsdk.json")
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -91,6 +98,7 @@ if (app.Environment.IsDevelopment())
         options.DocumentPath = "/openapi/v1.json";
     });
 }
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 
