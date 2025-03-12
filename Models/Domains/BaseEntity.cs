@@ -1,12 +1,12 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace CoffeeHub.Models;
+namespace CoffeeHub.Models.Domains;
 
 public class BaseEntity
 {
     [Key]
-    public long Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
 }

@@ -2,8 +2,17 @@ using AutoMapper;
 using CoffeeHub.Models;
 using CoffeeHub.Models.DTOs.MenuItem;
 using CoffeeHub.Services.Interfaces;
+using FirebaseAdmin;
+using Firebase.Storage;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Google.Apis.Auth.OAuth2;
+using System.IO;
+using System.Threading.Tasks;
+using FirebaseAdmin.Auth;
+using CoffeeHub.Models.DTOs.MenuItemDtos;
+using CoffeeHub.Models.Domains;
+using CoffeeHub.Models.DTOs.RecipeDtos;
 
 namespace CoffeeHub.Controllers
 {
@@ -21,7 +30,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(long id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var menuItem = await _menuItemService.GetByIdAsync(id);
             if (menuItem == null)
@@ -35,11 +44,13 @@ namespace CoffeeHub.Controllers
         public async Task<IActionResult> GetAll()
         {
             var menuItems = await _menuItemService.GetAllAsync();
-            return Ok(menuItems);
+            var menuItemDtos = _mapper.Map<IEnumerable<MenuItemDto>>(menuItems);
+            
+            return Ok(menuItemDtos);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(MenuItemDto menuItemDto)
+        public async Task<IActionResult> Create([FromBody] MenuItemAddDto menuItemDto)
         {
             var menuItem = _mapper.Map<MenuItem>(menuItemDto);
             await _menuItemService.AddAsync(menuItem);
@@ -47,16 +58,16 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(long id, MenuItemDto menuItemDto)
+        public async Task<IActionResult> Update(Guid id, MenuItemEditDto menuItemEditDto)
         {
-            var menuItem = _mapper.Map<MenuItem>(menuItemDto);
+            var menuItem = _mapper.Map<MenuItem>(menuItemEditDto);
             menuItem.Id = id;
             await _menuItemService.UpdateAsync(menuItem);
             return Ok("MenuItem updated successfully");
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(long id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             var menuItem = await _menuItemService.GetByIdAsync(id);
             if (menuItem == null)
@@ -65,6 +76,17 @@ namespace CoffeeHub.Controllers
             }
             await _menuItemService.DeleteAsync(menuItem);
             return Ok("MenuItem deleted successfully");
+        }
+
+        [HttpPut("updateAvailability")]
+        public async Task<IActionResult> UpdateAvailability(Guid id)
+        {
+            var menuItem = await _menuItemService.UpdateMenuItemAvailabilityAsync(id);
+            if (menuItem == null)
+            {
+                return NotFound();
+            }
+            return Ok("MenuItem availability updated successfully");
         }
     }
 }

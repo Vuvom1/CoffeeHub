@@ -5,5 +5,5 @@ namespace CoffeeHub.Services.Interfaces;
 
 public interface IIngredientService : IBaseService<Ingredient>
 {
-
+    public Task<List<Ingredient>> GetByIdsAsync(IEnumerable<Guid> ids);
 }

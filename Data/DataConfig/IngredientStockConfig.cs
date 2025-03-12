@@ -11,27 +11,29 @@ public class IngredientStockConfig : IEntityTypeConfiguration<IngredientStock>
         builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Id)
-            .ValueGeneratedOnAdd();
+            .ValueGeneratedOnAdd()
+            .HasDefaultValueSql("NEWID()");
 
         builder.Property(e => e.IngredientId)
             .IsRequired();
 
         builder.Property(e => e.Quantity)
             .IsRequired();
-        
-        builder.Property(e => e.UnitOfMeasurement)
+
+        builder.Property(e => e.DateOfManufacture)
+            .HasColumnType("date")
             .IsRequired();
 
         builder.Property(e => e.ExpiryDate)
+            .HasColumnType("date")
             .IsRequired();
 
         builder.Property(e => e.CostPrice)
             .IsRequired();
 
-        builder.Property(e => e.RemainingStock)
-            .IsRequired();
-
-        builder.Property(e => e.PurchaseDate)
+         builder.Property(e => e.PurchaseDate)
+            .IsRequired()
+            .HasColumnType("date")
             .HasDefaultValueSql("GETDATE()");
 
         builder.HasOne(e => e.Ingredient)

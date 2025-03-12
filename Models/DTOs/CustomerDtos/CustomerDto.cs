@@ -11,5 +11,5 @@ public class CustomerDto
     public string? IsAvailable { get; set; }
     public string? Role { get; set; }
     public int Point { get; set; } = 0;
-    public long? AuthId { get; set; }
+    public Guid? AuthId { get; set; }
 }

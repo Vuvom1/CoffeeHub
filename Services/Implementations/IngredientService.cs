@@ -12,4 +12,9 @@ public class IngredientService : BaseService<Ingredient>, IIngredientService
     {
         _ingredientRepository = ingredientRepository;
     }
+
+    public Task<List<Ingredient>> GetByIdsAsync(IEnumerable<Guid> ids)
+    {
+        return _ingredientRepository.GetByIdsAsync(ids);
+    }
 }

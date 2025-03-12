@@ -5,17 +5,17 @@ namespace CoffeeHub.Models.DTOs.PromtionDtos;
 
 public class PromotionDto
 {   
-    public long Id { get; set; }
-    public string? Code { get; set; }
-    public string? Name { get; set; }
+    public Guid Id { get; set; }
+    public required string Code { get; set; }
+    public required string Name { get; set; }
     public string? Description { get; set; }
-    public PromotionType PromotionType { get; set; }
-    public decimal DiscountValue { get; set; } = 0;
-    public decimal MinPurchaseAmount { get; set; }
-    public decimal MaxDiscountAmount { get; set; }
+    public decimal DiscountRate { get; set; } = 0;
+    public required decimal MinPurchaseAmount { get; set; }
+    public required decimal MaxDiscountAmount { get; set; }
     public int? UssageLimit { get; set; }
-    public int? UssageCount { get; set; } = 0;
-    public DateOnly StartDate { get; set; }
-    public DateOnly EndDate { get; set; }
+    public int? UssageCount { get; set; }
+    public CustomerLevel CustomerLevel { get; set; }
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
     public bool IsActive { get; set; } = true;
 }

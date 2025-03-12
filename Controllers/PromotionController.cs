@@ -38,15 +38,22 @@ namespace CoffeeHub.Controllers
             return Ok(promotion);
         }
 
+        [HttpGet("usable/{customerId}")]
+        public async Task<IActionResult> GetUsablePromotionsByCustomerId(Guid customerId)
+        {
+            var promotions = await _promotionService.GetUsablePromotionsByCustomerIdAsync(customerId);
+            return Ok(promotions);
+        }
+
         [HttpPut("{id}/activation")]
-        public async Task<IActionResult> UpdatePromotionActivation(long id, [FromQuery] bool isActive)
+        public async Task<IActionResult> UpdatePromotionActivation(Guid id, [FromQuery] bool isActive)
         {
             await _promotionService.UpdatePromotionActivation(id, isActive);
             return Ok("Promotion activation updated successfully");
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(long id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var promotion = await _promotionService.GetByIdAsync(id);
             if (promotion == null)
@@ -60,11 +67,12 @@ namespace CoffeeHub.Controllers
         public async Task<IActionResult> GetAll()
         {
             var promotions = await _promotionService.GetAllAsync();
-            return Ok(promotions);
+            var promotionDtos = _mapper.Map<IEnumerable<PromotionDto>>(promotions);
+            return Ok(promotionDtos);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(PromotionDto promotionDto)
+        public async Task<IActionResult> Create(PromotionAddDto promotionDto)
         {
             var promotion = _mapper.Map<Promotion>(promotionDto);
             await _promotionService.AddAsync(promotion);
@@ -72,7 +80,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(long id, PromotionDto promotionDto)
+        public async Task<IActionResult> Update(Guid id, PromotionEditDto promotionDto)
         {
             var promotion = _mapper.Map<Promotion>(promotionDto);
             promotion.Id = id;

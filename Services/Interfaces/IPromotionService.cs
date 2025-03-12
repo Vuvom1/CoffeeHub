@@ -7,5 +7,6 @@ public interface IPromotionService : IBaseService<Promotion>
 {
     Task<Promotion?> GetByCodeAsync(string code);
     Task<IEnumerable<Promotion>> GetActivePromotionsAsync();
-    Task UpdatePromotionActivation(long id, bool isActive);
+    Task<IEnumerable<Promotion>> GetUsablePromotionsByCustomerIdAsync(Guid customerId);
+    Task UpdatePromotionActivation(Guid id, bool isActive);
 }

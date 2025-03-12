@@ -13,6 +13,10 @@ public class MenuItemCategoryConfig : IEntityTypeConfiguration<MenuItemCategory>
 
         builder.HasKey(e => e.Id);
 
+        builder.Property(e => e.Id)
+            .ValueGeneratedOnAdd()
+            .HasDefaultValueSql("NEWID()");
+
         builder.Property(e => e.Name)
             .IsRequired()
             .HasMaxLength(50);

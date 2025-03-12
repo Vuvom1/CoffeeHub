@@ -2,11 +2,12 @@ using System;
 using System.Linq.Expressions;
 using CoffeeHub.Services.Interfaces;
 using CoffeeHub.Repositories.Interfaces;
+using CoffeeHub.Models.Domains;
 
 
 namespace CoffeeHub.Services.Implementations;
 
-public class BaseService<T> : IBaseService<T> where T : CoffeeHub.Models.BaseEntity
+public class BaseService<T> : IBaseService<T> where T : BaseEntity
 {
     protected readonly IBaseRepository<T> _repository;
 
@@ -14,7 +15,7 @@ public class BaseService<T> : IBaseService<T> where T : CoffeeHub.Models.BaseEnt
     {
         _repository = repository;
     }
-    public async Task<T> GetByIdAsync(long id)
+    public async Task<T> GetByIdAsync(Guid id)
     {
         return await _repository.GetByIdAsync(id);
     }
@@ -29,7 +30,7 @@ public class BaseService<T> : IBaseService<T> where T : CoffeeHub.Models.BaseEnt
         return await _repository.FindAsync(predicate);  
     }
 
-    public async Task AddAsync(T entity)
+    public virtual async Task AddAsync(T entity)
     {
         await _repository.AddAsync(entity);
     }

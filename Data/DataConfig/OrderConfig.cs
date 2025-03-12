@@ -16,7 +16,7 @@ public class OrderConfig : IEntityTypeConfiguration<Order>
 
             builder.Property(e => e.Id)
                 .ValueGeneratedOnAdd()
-                .HasColumnName("Id");
+                .HasDefaultValueSql("NEWID()");
 
             builder.Property(e => e.OrderDate)
                 .IsRequired()

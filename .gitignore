@@ -1,3 +1,4 @@
 node_modules
 Credentials/*
-bin              
+bin   
+appsettings.Secrets.json           

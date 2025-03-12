@@ -1,5 +1,6 @@
 using System;
 using CoffeeHub.Models;
+using CoffeeHub.Models.Domains;
 using CoffeeHub.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 

@@ -15,7 +15,7 @@ public abstract class BaseController<T> : ControllerBase where T : class
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(long id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         var entity = await _service.GetByIdAsync(id);
         if (entity == null)
@@ -45,7 +45,7 @@ public abstract class BaseController<T> : ControllerBase where T : class
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(long id, [FromBody] T entity)
+    public async Task<IActionResult> Update(Guid id, [FromBody] T entity)
     {
         if (entity == null || (entity as dynamic).Id != id)
         {
@@ -58,12 +58,17 @@ public abstract class BaseController<T> : ControllerBase where T : class
             return NotFound();
         }
 
+        if (entity == null)
+        {
+            return BadRequest();
+        }
+
         await _service.UpdateAsync(entity);
         return NoContent();
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(long id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         var entity = await _service.GetByIdAsync(id);
         if (entity == null)

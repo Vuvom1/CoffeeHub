@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using CoffeeHub.Models;
 using CoffeeHub.Repositories.Interfaces;
+using CoffeeHub.Models.Domains;
 
-namespace CoffeeHub.Repositories;
+namespace CoffeeHub.Repositories.Implementations;
 
 public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
 {
@@ -14,7 +14,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
         _context = context;
     }
 
-    public async Task<T> GetByIdAsync(long id)
+    public virtual async Task<T> GetByIdAsync(Guid id)
     {
         var entity = await _context.Set<T>().FindAsync(id);
         if (entity == null)
@@ -24,7 +24,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
         return entity;
     }
 
-    public async Task<IEnumerable<T>> GetAllAsync()
+    public virtual async Task<IEnumerable<T>> GetAllAsync()
     {
         return await _context.Set<T>().ToListAsync();
     }
@@ -50,5 +50,18 @@ public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
     {
         _context.Set<T>().Remove(entity);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task AddRangeAsync(IEnumerable<T> entities)
+    {
+        await _context.Set<T>().AddRangeAsync(entities);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<T> AddAndReturnAsync(T entity)
+    {
+        var result = await _context.Set<T>().AddAsync(entity);
+        await _context.SaveChangesAsync();
+        return result.Entity;
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using CoffeeHub.Models;
+using CoffeeHub.Models.Domains;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,7 +15,8 @@ public class ShiftConfig : IEntityTypeConfiguration<Shift>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
-            .ValueGeneratedOnAdd();
+            .ValueGeneratedOnAdd()
+            .HasDefaultValueSql("NEWID()");
 
         builder.Property(x => x.Name)
             .IsRequired();

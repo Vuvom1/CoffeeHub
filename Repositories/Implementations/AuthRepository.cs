@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using CoffeeHub.Models;
 using CoffeeHub.Enums;
-using CoffeeHub.Repositories.Interfaces;
+using CoffeeHub.Models.Domains;
 
 namespace CoffeeHub.Repositories.Implementations;
 
@@ -36,7 +36,6 @@ public class AuthRepository(CoffeeHubContext coffeeHubContext) : BaseRepository<
         auth.PasswordSalt = passwordSalt;
 
         auth.IsAvailable = true;
-        auth.Role = UserRole.Customer;
 
         await AddAsync(auth);
         return auth;
@@ -45,6 +44,11 @@ public class AuthRepository(CoffeeHubContext coffeeHubContext) : BaseRepository<
     public Task<bool> UserExists(string username)
     {
         return _context.Set<Auth>().AnyAsync(x => x.Username == username);
+    }
+
+    public Task<bool> EmailExists(string email)
+    {
+        return _context.Set<Auth>().AnyAsync(x => x.Email == email);
     }
 
     private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)

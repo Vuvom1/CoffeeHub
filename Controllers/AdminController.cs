@@ -19,7 +19,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(long id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var admin = await _adminService.GetByIdAsync(id);
             if (admin == null)

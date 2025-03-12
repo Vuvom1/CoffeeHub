@@ -1,4 +1,5 @@
 using CoffeeHub.Models;
+using CoffeeHub.Models.Domains;
 using CoffeeHub.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +24,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var shift = await _shiftService.GetByIdAsync(id);
             if (shift == null)
@@ -41,7 +42,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, Shift shift)
+        public async Task<IActionResult> Update(Guid id, Shift shift)
         {
             var existingShift = await _shiftService.GetByIdAsync(id);
             if (existingShift == null)

@@ -1,9 +1,11 @@
 using System;
-using CoffeeHub.Models;
+using CoffeeHub.Models.Domains;
 
 namespace CoffeeHub.Services.Interfaces;
 
 public interface ICustomerService : IBaseService<Customer>
 {
-    
+    public Task<Customer> AddWithAuthAsync(Customer customer, Guid authId);
+    public Task<Customer?> GetByPhoneNumberAsync(string phone);
+    public Task<bool> IsActiveAsync(Guid id);
 }

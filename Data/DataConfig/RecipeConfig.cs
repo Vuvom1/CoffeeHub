@@ -14,15 +14,13 @@ public class RecipeConfig : IEntityTypeConfiguration<Recipe>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
-            .ValueGeneratedOnAdd();
+            .ValueGeneratedOnAdd()
+            .HasDefaultValueSql("NEWID()");
 
         builder.Property(x => x.IngredientId)
             .IsRequired();
 
         builder.Property(x => x.Quantity)
-            .IsRequired();
-
-        builder.Property(x => x.UnitOfMeasurement)
             .IsRequired();
 
         builder.Property(x => x.MenuItemId)

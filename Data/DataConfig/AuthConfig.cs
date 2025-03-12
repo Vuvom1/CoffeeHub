@@ -1,6 +1,6 @@
 using System;
 using CoffeeHub.Enums;
-using CoffeeHub.Models;
+using CoffeeHub.Models.Domains;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,12 +10,12 @@ public class AuthConfig : IEntityTypeConfiguration<Auth>
 {
     public void Configure(EntityTypeBuilder<Auth> builder)
     {
-
-        builder.HasKey(x => x.Id);   
+        builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
-            .ValueGeneratedOnAdd();
-
+            .ValueGeneratedOnAdd()
+            .HasDefaultValueSql("NEWID()");
+            
         builder.Property(x => x.Username)
             .IsRequired()
             .HasMaxLength(50);

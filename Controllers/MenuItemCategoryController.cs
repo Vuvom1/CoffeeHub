@@ -29,7 +29,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var menuItemCategory = await _menuItemCategoryService.GetByIdAsync(id);
             if (menuItemCategory == null)
@@ -40,15 +40,15 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(MenuItemCategoryDto menuItemCategory)
+        public async Task<IActionResult> Create(MenuItemCategoryAddDto menuItemCategory)
         {
             var menuItemCategoryDomain = _mapper.Map<MenuItemCategory>(menuItemCategory);
             await _menuItemCategoryService.AddAsync(menuItemCategoryDomain);
-            return StatusCode(StatusCodes.Status201Created);
+            return Ok("MenuItemCategory created successfully");
         }
         
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, MenuItemCategoryDto menuItemCategory)
+        public async Task<IActionResult> Update(Guid id, MenuItemCategoryDto menuItemCategory)
         {
             var existingMenuItemCategory = await _menuItemCategoryService.GetByIdAsync(id);
             if (existingMenuItemCategory == null)

@@ -1,6 +1,6 @@
 using System;
 
-namespace CoffeeHub.Models;
+namespace CoffeeHub.Models.Domains;
 
 public class Shift : BaseEntity
 {

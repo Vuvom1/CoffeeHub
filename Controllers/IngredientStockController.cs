@@ -1,4 +1,6 @@
+using AutoMapper;
 using CoffeeHub.Models.Domains;
+using CoffeeHub.Models.DTOs.IngredientStockDtos;
 using CoffeeHub.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,20 +12,23 @@ namespace CoffeeHub.Controllers
     public class IngredientStockController : ControllerBase
     {
         private readonly IIngredientStockService _ingredientStockService;
-        public IngredientStockController(IIngredientStockService ingredientStockService)
+        private readonly IMapper _mapper;
+        public IngredientStockController(IIngredientStockService ingredientStockService, IMapper mapper)
         {
             _ingredientStockService = ingredientStockService;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var ingredientStocks = await _ingredientStockService.GetAllAsync();
-            return Ok(ingredientStocks);
+            var ingredientStocksDto = _mapper.Map<IEnumerable<IngredientStockDto>>(ingredientStocks);
+            return Ok(ingredientStocksDto);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var ingredientStock = await _ingredientStockService.GetByIdAsync(id);
             if (ingredientStock == null)
@@ -34,14 +39,16 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(IngredientStock ingredientStock)
+        public async Task<IActionResult> Create(IngredientStockAddDto ingredientStockAddDto)
         {
-            await _ingredientStockService.AddAsync(ingredientStock);
+            var ingredient = _mapper.Map<IngredientStock>(ingredientStockAddDto);
+            await _ingredientStockService.AddAsync(ingredient);
+            
             return StatusCode(StatusCodes.Status201Created, "Ingredient stock created successfully");
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, IngredientStock ingredientStock)
+        public async Task<IActionResult> Update(Guid id, IngredientStock ingredientStock)
         {
             var existingIngredientStock = await _ingredientStockService.GetByIdAsync(id);
             if (existingIngredientStock == null)

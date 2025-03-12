@@ -11,6 +11,10 @@ public class PromotionConfig : IEntityTypeConfiguration<Promotion>
     {
         builder.HasKey(p => p.Id);
 
+        builder.Property(p => p.Id)
+            .ValueGeneratedOnAdd()
+            .HasDefaultValueSql("NEWID()");
+
         builder.Property(p => p.Name)
             .IsRequired()
             .HasMaxLength(50);
@@ -18,7 +22,7 @@ public class PromotionConfig : IEntityTypeConfiguration<Promotion>
         builder.Property(p => p.Description)
             .HasMaxLength(200);
 
-        builder.Property(p => p.DiscountValue)
+        builder.Property(p => p.DiscountRate)
             .IsRequired()
             .HasColumnType("decimal(5, 2)");
 
@@ -33,9 +37,5 @@ public class PromotionConfig : IEntityTypeConfiguration<Promotion>
         builder.Property(p => p.IsActive)
             .IsRequired()
             .HasDefaultValue(true);
-
-        builder.HasMany(p => p.Invoices)
-            .WithOne(i => i.Promotion)
-            .HasForeignKey(i => i.PromotionId);
     }
 }

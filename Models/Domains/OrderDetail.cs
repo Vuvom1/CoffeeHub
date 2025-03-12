@@ -1,15 +1,16 @@
 using System;
 using CoffeeHub.Models.Domains;
 
-namespace CoffeeHub.Models;
-
-public class OrderDetail : BaseEntity
+namespace CoffeeHub.Models.Domains
 {
-    public long OrderId { get; set; }
-    public long MenuItemId { get; set; }
-    public int Quantity { get; set; }
-    public decimal Price { get; set; }
-    public decimal Total { get; set; }
-    public virtual Order Order { get; set; } = null!;
-    public virtual MenuItem MenuItem { get; set; } = null!;
+    public class OrderDetail : BaseEntity
+    {
+        public Guid MenuItemId { get; set; }
+        public Guid OrderId { get; set; }
+        public int Quantity { get; set; }
+        public decimal Price { get; set; }
+        public decimal TotalPrice { get; set; }
+        public virtual Order Order { get; set; } = null!;
+        public virtual MenuItem MenuItem { get; set; } = null!;
+    }
 }

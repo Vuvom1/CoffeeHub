@@ -1,5 +1,6 @@
 using AutoMapper;
 using CoffeeHub.Models;
+using CoffeeHub.Models.Domains;
 using CoffeeHub.Models.DTOs.CustomerDtos;
 using CoffeeHub.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -21,7 +22,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(long id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var customer = await _customerService.GetByIdAsync(id);
             if (customer == null)
@@ -38,16 +39,30 @@ namespace CoffeeHub.Controllers
             return Ok(customers);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(CustomerDto customerDto)
+        [HttpGet("phone/{phone}")]
+        public async Task<IActionResult> GetByPhoneNumber(string phone)
         {
-            var customer = _mapper.Map<Customer>(customerDto);
-            await _customerService.AddAsync(customer);
-            return Ok("Customer created successfully");
+            var customer = await _customerService.GetByPhoneNumberAsync(phone);
+            if (customer == null)
+            {
+                return NotFound();
+            }
+            return Ok(customer);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateWithAuth([FromBody] CustomerAddDto customerAddDto
+        )
+        {
+            var customer = _mapper.Map<Customer>(customerAddDto);
+
+            await _customerService.AddWithAuthAsync(customer, customerAddDto.AuthId);
+
+            return Ok("Employee created successfully");
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(long id, CustomerDto customerDto)
+        public async Task<IActionResult> Update(Guid id, CustomerDto customerDto)
         {
             var customer = _mapper.Map<Customer>(customerDto);
             customer.Id = id;
@@ -56,7 +71,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(long id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             var customer = await _customerService.GetByIdAsync(id);
             if (customer == null)

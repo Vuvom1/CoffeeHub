@@ -1,4 +1,4 @@
-using CoffeeHub.Models;
+using CoffeeHub.Models.Domains;
 using CoffeeHub.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +23,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var schedule = await _scheduleService.GetByIdAsync(id);
             if (schedule == null)
@@ -41,7 +41,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, Schedule schedule)
+        public async Task<IActionResult> Update(Guid id, Schedule schedule)
         {
             var existingSchedule = await _scheduleService.GetByIdAsync(id);
             if (existingSchedule == null)
