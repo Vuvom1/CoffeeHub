@@ -45,12 +45,7 @@ namespace CoffeeHub.Controllers
             return Ok(promotions);
         }
 
-        [HttpPut("{id}/activation")]
-        public async Task<IActionResult> UpdatePromotionActivation(Guid id, [FromQuery] bool isActive)
-        {
-            await _promotionService.UpdatePromotionActivation(id, isActive);
-            return Ok("Promotion activation updated successfully");
-        }
+        
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
@@ -86,6 +81,13 @@ namespace CoffeeHub.Controllers
             promotion.Id = id;
             await _promotionService.UpdateAsync(promotion);
             return Ok("Promotion updated successfully");
+        }
+
+        [HttpPut("activation/{id}")]
+        public async Task<IActionResult> UpdatePromotionActivation(Guid id, [FromBody] bool isActive)
+        {
+            await _promotionService.UpdateActivationAsync(id, isActive);
+            return Ok("Promotion activation updated successfully");
         }
     }
 }

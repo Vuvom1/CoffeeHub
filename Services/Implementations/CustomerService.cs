@@ -32,9 +32,19 @@ public class CustomerService : BaseService<Customer>, ICustomerService
         return addedCustomer;
     }
 
+    public Task<IEnumerable<Customer>> GetAllWithAuthAsync()
+    {
+        return _customerRepository.GetAllWithAuthAsync();
+    }
+
     public Task<Customer?> GetByPhoneNumberAsync(string phone)
     {
         return _customerRepository.GetByPhoneNumberAsync(phone);
+    }
+
+    public Task<Customer?> GetWithAuthByIdAsync(Guid id)
+    {
+        return _customerRepository.GetWithAuthByIdAsync(id);
     }
 
     public Task<bool> IsActiveAsync(Guid id)

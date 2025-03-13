@@ -24,19 +24,18 @@ namespace CoffeeHub.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var customer = await _customerService.GetByIdAsync(id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
-            return Ok(customer);
+            var customer = await _customerService.GetWithAuthByIdAsync(id);
+            var customerDto = _mapper.Map<CustomerDto>(customer);
+            return Ok(customerDto);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var customers = await _customerService.GetAllAsync();
-            return Ok(customers);
+            var customers = await _customerService.GetAllWithAuthAsync();
+            var customerDtos = _mapper.Map<IEnumerable<CustomerDto>>(customers);    
+
+            return Ok(customerDtos);
         }
 
         [HttpGet("phone/{phone}")]

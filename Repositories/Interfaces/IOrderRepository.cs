@@ -5,5 +5,5 @@ namespace CoffeeHub.Repositories.Interfaces;
 
 public interface IOrderRepository : IBaseRepository<Order>
 {
-
+    
 }

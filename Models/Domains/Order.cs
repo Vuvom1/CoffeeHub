@@ -16,6 +16,7 @@ public class Order : BaseEntity
     public Guid? CustomerId { get; set; }
     public string? Note { get; set; }
     public Guid? PromotionId { get; set; }
+    public required int OrderCardNumber { get; set; }
     public virtual Customer? Customer { get; set; }
     public virtual Employee Employee { get; set; } = null!;
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new HashSet<OrderDetail>();

@@ -37,7 +37,7 @@ public class PromotionService : BaseService<Promotion>, IPromotionService
         return _promotionRepository.GetUsablePromotionsByCustomerLevelAsync(customer.CustomerLevel);
     }
 
-    public Task UpdatePromotionActivation(Guid id, bool isActive)
+    public Task UpdateActivationAsync(Guid id, bool isActive)
     {
         return _promotionRepository.UpdatePromotionActivation(id, isActive);
     }
@@ -78,4 +78,5 @@ public class PromotionService : BaseService<Promotion>, IPromotionService
         bool isValid = maxDiscountAmount <= MinPurchaseAmount;
         return Task.FromResult(isValid);
     }
+
 }
