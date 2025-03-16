@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CoffeeHub.Models;
 using CoffeeHub.Models.Domains;
 using CoffeeHub.Repositories.Interfaces;
 using CoffeeHub.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeHub.Services.Implementations
 {
@@ -14,117 +16,83 @@ namespace CoffeeHub.Services.Implementations
         private readonly IPromotionRepository _promotionRepository;
         private readonly IMenuItemRepository _menuItemRepository;
         private readonly ICustomerRepository _customerRepository;
+        private readonly IEmployeeRepository _employeeRepository;
+        private readonly IDbContextFactory<CoffeeHubContext> _dbContextFactory;
 
         public OrderService(
             IOrderRepository orderRepository,
             IOrderDetailRepository orderDetailRepository,
             IPromotionRepository promotionRepository,
             IMenuItemRepository menuItemRepository,
-            ICustomerRepository customerRepository) : base(orderRepository)
+            ICustomerRepository customerRepository, 
+            IEmployeeRepository employeeRepository,
+            IDbContextFactory<CoffeeHubContext> dbContextFactory) : base(orderRepository)
         {
             _orderRepository = orderRepository;
             _orderDetailRepository = orderDetailRepository;
             _promotionRepository = promotionRepository;
             _menuItemRepository = menuItemRepository;
             _customerRepository = customerRepository;
+            _dbContextFactory = dbContextFactory;
         }
 
-        public async Task AddWithDetailsAsync(Order order, IEnumerable<OrderDetail> orderDetails)
+        public override async Task AddAsync(Order order)
         {
-            // Check if customer is guest
-            var guestCustomer = await _customerRepository.GetByEmailAsync("guest@gmail.com");
+            var totalPrice = 0m;
+            var totalQuantity = 0;
+            var discountAmount = 0m;
+            var customerLevel = Enums.CustomerLevel.Silver;
+            
+            order.EmployeeId = new Guid("00000000-0000-0000-0000-000000000001");
+            
+            foreach (var orderDetail in order.OrderDetails)
+            {
+                var menuItem = _menuItemRepository.GetByIdAsync(orderDetail.MenuItemId);
+                var price = orderDetail.Quantity * menuItem.Result.Price;
+
+                totalPrice += price;
+                totalQuantity += orderDetail.Quantity;
+
+                orderDetail.Price = menuItem.Result.Price;
+                orderDetail.TotalPrice = price;
+            }
 
             if (order.CustomerId == null)
             {
-                if (guestCustomer == null)
+                order.CustomerId = new Guid("00000000-0000-0000-0000-000000000002");
+            } else {
+                var customer = await _customerRepository.GetByIdAsync(order.CustomerId.Value);
+                var point = (int)Math.Floor(totalPrice / 1000);
+                if (!customer.IsAvailable)
                 {
-                    throw new InvalidOperationException("Guest customer not found.");
+                    throw new InvalidOperationException($"Customer with id {order.CustomerId} is not available.");
                 }
-                order.CustomerId = guestCustomer.Id;
-            }
-
-            // Check if customer is active
-            var isActiveCustomer = await _customerRepository.IsActiveAsync(order.CustomerId.Value);
-
-            if (!isActiveCustomer)
-            {
-                throw new InvalidOperationException($"Customer with id {order.CustomerId} is not available.");
-            }
-
-            // Check if promotion is active
-            if (order.PromotionId != null)
-            {
-                var isActivePromotion = await _promotionRepository.IsPromotionActiveAsync(order.PromotionId.Value);
-
-                if (!isActivePromotion)
-                {
-                    throw new InvalidOperationException($"Promotion with id {order.PromotionId} is not available.");
+                else
+                {   
+                    customerLevel = customer.CustomerLevel;
+                    customer.Point += point;
+                    await _customerRepository.UpdateAsync(customer);
                 }
             }
-            
-            var createdOrder = await _orderRepository.AddAndReturnAsync(order);
 
-            var totalPrice = 0m;
-            var totalQuantity = 0;
-
-            foreach (var orderDetail in orderDetails)
+            var PromotionId = order.PromotionId;
+            if (PromotionId != null)
             {
-                var isActiveMenuItem = await _menuItemRepository.IsActivatedAsync(orderDetail.MenuItemId);
+                var isUsable = await _promotionRepository.IsPromotionUsableAsync(PromotionId.Value, totalPrice, DateTime.Now, customerLevel);
 
-                if (!isActiveMenuItem)
+                if (isUsable)
                 {
-                    await _orderRepository.DeleteAsync(createdOrder);
-
-                    throw new InvalidOperationException($"MenuItem with id {orderDetail.MenuItemId} is not available.");
-                }
-
-                var menuItemPrice = await _menuItemRepository.GetPriceByIdAsync(orderDetail.MenuItemId);
-
-                //Calculate values for order detail 
-                orderDetail.OrderId = createdOrder.Id;
-                orderDetail.Price = menuItemPrice;
-                orderDetail.TotalPrice = orderDetail.Price * orderDetail.Quantity;
-
-                //Calculate values for order
-                totalQuantity += orderDetail.Quantity;
-                totalPrice += orderDetail.TotalPrice;
-
-                // Check for duplicate order details
-                var existingOrderDetail = await _orderDetailRepository.FindAsync(od => od.OrderId == createdOrder.Id && od.MenuItemId == orderDetail.MenuItemId);
-                if (existingOrderDetail != null)
-                {
-                    continue;
-                }
-
-                await _orderDetailRepository.AddAsync(orderDetail);
-            }
-
-            if (order.PromotionId != null)
-            {
-                var promotion = await _promotionRepository.GetByIdAsync(order.PromotionId.Value);
-                var isUsable = await _promotionRepository.IsPromotionUsableAsync(promotion.Id, totalPrice, DateTime.Now);
-
-                if (promotion != null && isUsable)
-                {
-                    var discount = await _promotionRepository.CalculateDiscountAsync(promotion.Id, totalPrice);
-                    order.DiscountAmount = discount;
-                    order.FinalAmount = totalPrice - discount;
+                    discountAmount = await _promotionRepository.CalculateDiscountAsync(PromotionId.Value, totalPrice);
+                    await _promotionRepository.IncreaseUsageCountAsync(PromotionId.Value);
                 }
             }
-            else
-            {
-                order.FinalAmount = totalPrice;
-            }
 
-            //Add point to customer
-            var customer = await _customerRepository.GetByIdAsync(order.CustomerId.Value);
-            var point = (int) Math.Floor(totalPrice / 1000);
-            await _customerRepository.IncreasePointAsync(customer.Id, point);
+            order.TotalAmount = totalPrice;
+            order.TotalQuantity = totalQuantity;
+            order.DiscountAmount = discountAmount;
+            order.FinalAmount = totalPrice - discountAmount;
 
-            createdOrder.TotalAmount = totalPrice;
-            createdOrder.TotalQuantity = totalQuantity;
-
-            await _orderRepository.UpdateAsync(createdOrder);
+            await _orderRepository.AddAsync(order);
         }
     }
 }

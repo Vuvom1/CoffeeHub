@@ -8,7 +8,7 @@ public interface IPromotionRepository : IBaseRepository<Promotion>
 {
     Task<Promotion?> GetByCodeAsync(string code);
     Task<IEnumerable<Promotion>> GetActivePromotionsAsync();
-    Task<IEnumerable<Promotion>> GetUsablePromotionsByCustomerLevelAsync(CustomerLevel customerLevel);
+    Task<IEnumerable<Promotion>> GetPromotionsByCustomerLevelAsync(CustomerLevel customerLevel);
     Task UpdatePromotionActivation(Guid id, bool isActive);
     Task<decimal> CalculateDiscountAsync(Guid promotionId, decimal totalAmount);
     Task<int> IncreaseUsageCountAsync(Guid promotionId);

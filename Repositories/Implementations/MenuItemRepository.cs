@@ -37,4 +37,21 @@ public class MenuItemRepository : BaseRepository<MenuItem>, IMenuItemRepository
         await _context.SaveChangesAsync();
         return menuItem;
     }
+
+    Task<IEnumerable<MenuItem>> IMenuItemRepository.GetPopularMenuItemsAsync(int limit)
+    {
+        var orderDetailsGrouped = _context.OrderDetails.GroupBy(x => x.MenuItemId)
+            .Select(x => new { MenuItemId = x.Key, TotalQuantity = x.Sum(y => y.Quantity) })
+            .OrderByDescending(x => x.TotalQuantity)
+            .Take(limit)
+            .ToList();
+
+        var menuItemIds = orderDetailsGrouped.Select(x => x.MenuItemId).ToList();
+        return Task.FromResult(_context.MenuItems.Where(x => menuItemIds.Contains(x.Id)).Include(x => x.MenuItemCategory).AsEnumerable());
+    }
+
+    public async Task<IEnumerable<MenuItem>> GetNewestMenuItemsAsync(int limit)
+    {
+        return await _context.MenuItems.OrderByDescending(x => x.CreatedAt).Take(limit).Include(x => x.MenuItemCategory).ToListAsync();
+    }
 }

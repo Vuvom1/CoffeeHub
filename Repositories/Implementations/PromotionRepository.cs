@@ -17,7 +17,7 @@ public class PromotionRepository : BaseRepository<Promotion>, IPromotionReposito
 
     public Task<decimal> CalculateDiscountAsync(Guid promotionId, decimal totalAmount)
     {
-        return Task.FromResult(_context.Promotions.FirstOrDefault(x => x.Id == promotionId)?.DiscountRate * totalAmount ?? 0);
+        return Task.FromResult(_context.Promotions.FirstOrDefault(x => x.Id == promotionId)?.DiscountRate * totalAmount / 100 ?? 0);
     }
 
     public Task<int> DecreaseUsageCount(Guid promotionId)
@@ -44,9 +44,10 @@ public class PromotionRepository : BaseRepository<Promotion>, IPromotionReposito
         return promotion;
     }
 
-    public Task<IEnumerable<Promotion>> GetUsablePromotionsByCustomerLevelAsync(CustomerLevel customerLevel)
+    public Task<IEnumerable<Promotion>> GetPromotionsByCustomerLevelAsync(CustomerLevel customerLevel)
     {
         var promotions = _context.Promotions.Where(x => x.CustomerLevel == customerLevel);
+
         return Task.FromResult(promotions.ToList().AsEnumerable());
     }
 

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using CoffeeHub.Enums;
 using CoffeeHub.Data.DataConfig;
 using CoffeeHub.Models.Domains;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace CoffeeHub.Models;
 
@@ -27,7 +28,12 @@ public class CoffeeHubContext : DbContext
     public DbSet<Ingredient> Ingredients { get; set; }
     public DbSet<IngredientStock> IngredientStocks { get; set; }    
     public DbSet<IngredientCategory> IngredientCategories { get; set; }
+    public DbSet<Delivery> Deliveries { get; set; }
     
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -48,24 +54,91 @@ public class CoffeeHubContext : DbContext
         modelBuilder.ApplyConfiguration(new IngredientConfig());
         modelBuilder.ApplyConfiguration(new IngredientStockConfig());
         modelBuilder.ApplyConfiguration(new IngredientCategoryConfig());
+        modelBuilder.ApplyConfiguration(new DeliveryConfig());
 
-        // modelBuilder.Entity<Auth>().Property(e => e.Role).HasConversion<int>();
+        SeedData(modelBuilder);
+    }
 
-        //  // Enforce uniqueness on foreign key properties
-        // modelBuilder.Entity<Auth>()
-        //     .HasIndex(a => a.AdminId)
-        //     .IsUnique()
-        //     .HasFilter("[AdminId] IS NOT NULL");
+    private static void SeedData(ModelBuilder modelBuilder)
+    {
+        Guid employeeId = new("00000000-0000-0000-0000-000000000001");
+        Guid guestId = new("00000000-0000-0000-0000-000000000002");
+        Guid adminId = new("00000000-0000-0000-0000-000000000003");
+        Guid adminAuthId = new("00000000-0000-0000-0000-000000000004");
 
-        // modelBuilder.Entity<Auth>()
-        //     .HasIndex(a => a.EmployeeId)
-        //     .IsUnique()
-        //     .HasFilter("[EmployeeId] IS NOT NULL");
+        modelBuilder.Entity<Employee>().HasData(
+            new Employee
+            {
+                Id = employeeId,
+                Name = "Online System",
+                DateOfBirth = new DateTime(2000, 1, 1),
+                PhoneNumber = "0000000000", 
+                MonthlySalary = 0,
+                Address = "Ho Chi Minh City",
+                Role = EmployeeRole.Cashier,
+                DateStartWork = new DateTime(2020, 1, 1)
+            }
+        );
 
-        // modelBuilder.Entity<Auth>()
-        //     .HasIndex(a => a.CustomerId)
-        //     .IsUnique()
-        //     .HasFilter("[CustomerId] IS NOT NULL");
+        modelBuilder.Entity<Customer>().HasData(
+            new Customer
+            {
+                Id = guestId,
+                Name = "Guest",
+                DateOfBirth = new DateTime(2000, 1, 1),
+                PhoneNumber = "0000000000",
+                Address = "Ho Chi Minh City",
+                IsAvailable = true,
+            }
+        );
 
+        modelBuilder.Entity<Admin>().HasData(
+            new Admin
+            {
+                Id = adminId,
+                Name = "Admin",
+                DateOfBirth = new DateTime(2000, 1, 1),
+                PhoneNumber = "0000000000",
+                Address = "Ho Chi Minh City",
+                AuthId = adminAuthId
+            }
+        );
+
+        modelBuilder.Entity<Auth>().HasData(
+            new Auth
+            {
+            Id = adminAuthId,
+            Username = "admin",
+            PasswordHash = Convert.FromHexString("F3DEAF58D30CF6E08E8D5FEA55CB026378B7F9F6FC816E30110C86219F94CCC2A24A09219BD28782945804056CFA165154D22F69042FD8D020E56F2F001CF201"),
+            PasswordSalt = Convert.FromHexString("E960C521B61E478EE05FC509CE23931FDB659097A71C5CA30184E4C6A046F297C6508F7A4206003EAB907E46EA5C8CC6C073DA1680E5A6B47C7667FE3E013DAC216D01FE5BF9BA32FCBCE7E4CE1861EAA7897B7FBC505916B85ACB09574F8D474B4A62F377DD079D0BC56C96ABF675AA4B1D05DC865D57D9626EF5E797C99DE0"),
+            Role = UserRole.Admin,
+            AdminId = adminId, 
+            Email = "admin@gmail.com"
+            }
+        );
+
+        modelBuilder.Entity<Shift>().HasData(
+            new Shift
+            {
+            Id = Guid.NewGuid(),
+            Name = "Morning Shift",
+            StartTime = new TimeSpan(6, 0, 0),
+            EndTime = new TimeSpan(12, 0, 0)
+            },
+            new Shift
+            {
+            Id = Guid.NewGuid(),
+            Name = "Afternoon Shift",
+            StartTime = new TimeSpan(12, 0, 0),
+            EndTime = new TimeSpan(18, 0, 0)
+            },
+            new Shift
+            {
+            Id = Guid.NewGuid(),
+            Name = "Evening Shift",
+            StartTime = new TimeSpan(18, 0, 0),
+            EndTime = new TimeSpan(22, 0, 0)
+            }
+        );
     }
 }

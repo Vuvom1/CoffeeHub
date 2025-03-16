@@ -14,6 +14,7 @@ public class Order : BaseEntity
     public decimal FinalAmount { get; set; }
     public required Guid EmployeeId { get; set; }
     public Guid? CustomerId { get; set; }
+    public Guid? DeliveryId { get; set; }
     public string? Note { get; set; }
     public Guid? PromotionId { get; set; }
     public required int OrderCardNumber { get; set; }
@@ -21,4 +22,5 @@ public class Order : BaseEntity
     public virtual Employee Employee { get; set; } = null!;
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new HashSet<OrderDetail>();
     public virtual Promotion? Promotion { get; set; } = null!;
+    public virtual Delivery? Delivery { get; set; }
 }

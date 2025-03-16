@@ -28,6 +28,13 @@ namespace CoffeeHub.Controllers
             return Ok(menuItemCategories);
         }
 
+        [HttpGet("getWithMenuItems")]
+        public async Task<IActionResult> GetAllWithMenuItems()
+        {
+            var menuItemCategories = await _menuItemCategoryService.GetAllWithMenuItemsAsync();
+            return Ok(menuItemCategories);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {

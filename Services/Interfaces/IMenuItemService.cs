@@ -6,6 +6,8 @@ namespace CoffeeHub.Services.Interfaces;
 
 public interface IMenuItemService : IBaseService<MenuItem>
 {
+    public Task<IEnumerable<MenuItem>> GetPopularMenuItemsAsync(int limit);
+    public Task<IEnumerable<MenuItem>> GetNewestMenuItemsAsync(int limit);
     public Task<MenuItem> UpdateMenuItemAvailabilityAsync(Guid id);
     public Task UpdateMenuItemRecipesAsynce(Guid id, IEnumerable<Recipe> menuItemRecipes);
 }

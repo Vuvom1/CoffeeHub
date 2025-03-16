@@ -7,6 +7,8 @@ namespace CoffeeHub.Repositories.Interfaces;
 public interface IMenuItemRepository : IBaseRepository<MenuItem>
 {
     new Task<IEnumerable<MenuItem>> GetAllAsync();
+    Task<IEnumerable<MenuItem>> GetPopularMenuItemsAsync(int limit);
+    Task<IEnumerable<MenuItem>> GetNewestMenuItemsAsync(int limit);
     Task<MenuItem> UpdateAvailabilityAsync(Guid id);
     Task<decimal> GetPriceByIdAsync(Guid id);
     Task<bool> IsActivatedAsync(Guid id);

@@ -3,6 +3,7 @@ using AutoMapper;
 using CoffeeHub.Models.Domains;
 using CoffeeHub.Models.DTOs.AuthDtos;
 using CoffeeHub.Models.DTOs.CustomerDtos;
+using CoffeeHub.Models.DTOs.DeliveryDtos;
 using CoffeeHub.Models.DTOs.EmployeeDtos;
 using CoffeeHub.Models.DTOs.IngredientCategoryDtos;
 using CoffeeHub.Models.DTOs.IngredientDtos;
@@ -14,6 +15,8 @@ using CoffeeHub.Models.DTOs.OrderDetailDtos;
 using CoffeeHub.Models.DTOs.OrderDtos;
 using CoffeeHub.Models.DTOs.PromtionDtos;
 using CoffeeHub.Models.DTOs.RecipeDtos;
+using CoffeeHub.Models.DTOs.ScheduleDtos;
+using CoffeeHub.Models.DTOs.ShiftDtos;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 namespace CoffeeHub.Helpers;
@@ -73,6 +76,18 @@ public class MappingProfile : Profile
         CreateMap<PromotionDto, Promotion>();
         CreateMap<PromotionAddDto, Promotion>();
         CreateMap<PromotionEditDto, Promotion>();
- 
+
+        CreateMap<Delivery, DeliveryDto>();
+        CreateMap<DeliveryDto, Delivery>();
+        CreateMap<DeliveryAddDto, Delivery>();
+
+        CreateMap<ShiftAddDto, Shift>();
+        CreateMap<Shift, ShiftDto>();
+        CreateMap<ShiftDto, Shift>();
+
+        CreateMap<Schedule, ScheduleDto>();
+        CreateMap<ScheduleDto, Schedule>();
+        CreateMap<ScheduleAddDto, Schedule>();
+        CreateMap<ScheduleEditDto, Schedule>();
     }
 }

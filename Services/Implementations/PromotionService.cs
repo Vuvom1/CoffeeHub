@@ -34,7 +34,10 @@ public class PromotionService : BaseService<Promotion>, IPromotionService
             throw new InvalidOperationException($"Customer with id {customerId} not found.");
         }
         
-        return _promotionRepository.GetUsablePromotionsByCustomerLevelAsync(customer.CustomerLevel);
+        var promotions = _promotionRepository.GetPromotionsByCustomerLevelAsync(customer.CustomerLevel).Result;
+
+        var usablePromotions = promotions.Where(p => p.StartDate <= DateTime.Now && p.EndDate >= DateTime.Now && p.IsActive);
+        return Task.FromResult(usablePromotions);
     }
 
     public Task UpdateActivationAsync(Guid id, bool isActive)

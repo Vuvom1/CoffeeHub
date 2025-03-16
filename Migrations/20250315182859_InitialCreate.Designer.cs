@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CoffeeHub.Migrations
 {
     [DbContext(typeof(CoffeeHubContext))]
-    [Migration("20250312121007_UpdateOrderCardNumber")]
-    partial class UpdateOrderCardNumber
+    [Migration("20250315182859_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -66,6 +66,20 @@ namespace CoffeeHub.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Admins");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("00000000-0000-0000-0000-000000000003"),
+                            Address = "Ho Chi Minh City",
+                            AuthId = new Guid("00000000-0000-0000-0000-000000000004"),
+                            CreatedAt = new DateTime(2025, 3, 16, 1, 28, 58, 448, DateTimeKind.Local).AddTicks(8180),
+                            DateOfBirth = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            MonthlySalary = 0m,
+                            Name = "Admin",
+                            PhoneNumber = "0000000000",
+                            UpdatedAt = new DateTime(2025, 3, 16, 1, 28, 58, 448, DateTimeKind.Local).AddTicks(8190)
+                        });
                 });
 
             modelBuilder.Entity("CoffeeHub.Models.Domains.Auth", b =>
@@ -134,6 +148,20 @@ namespace CoffeeHub.Migrations
                         .HasFilter("[EmployeeId] IS NOT NULL");
 
                     b.ToTable("Auths");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("00000000-0000-0000-0000-000000000004"),
+                            AdminId = new Guid("00000000-0000-0000-0000-000000000003"),
+                            CreatedAt = new DateTime(2025, 3, 16, 1, 28, 58, 448, DateTimeKind.Local).AddTicks(9280),
+                            Email = "admin@gmail.com",
+                            PasswordHash = new byte[] { 243, 222, 175, 88, 211, 12, 246, 224, 142, 141, 95, 234, 85, 203, 2, 99, 120, 183, 249, 246, 252, 129, 110, 48, 17, 12, 134, 33, 159, 148, 204, 194, 162, 74, 9, 33, 155, 210, 135, 130, 148, 88, 4, 5, 108, 250, 22, 81, 84, 210, 47, 105, 4, 47, 216, 208, 32, 229, 111, 47, 0, 28, 242, 1 },
+                            PasswordSalt = new byte[] { 233, 96, 197, 33, 182, 30, 71, 142, 224, 95, 197, 9, 206, 35, 147, 31, 219, 101, 144, 151, 167, 28, 92, 163, 1, 132, 228, 198, 160, 70, 242, 151, 198, 80, 143, 122, 66, 6, 0, 62, 171, 144, 126, 70, 234, 92, 140, 198, 192, 115, 218, 22, 128, 229, 166, 180, 124, 118, 103, 254, 62, 1, 61, 172, 33, 109, 1, 254, 91, 249, 186, 50, 252, 188, 231, 228, 206, 24, 97, 234, 167, 137, 123, 127, 188, 80, 89, 22, 184, 90, 203, 9, 87, 79, 141, 71, 75, 74, 98, 243, 119, 221, 7, 157, 11, 197, 108, 150, 171, 246, 117, 170, 75, 29, 5, 220, 134, 93, 87, 217, 98, 110, 245, 231, 151, 201, 157, 224 },
+                            Role = 0,
+                            UpdatedAt = new DateTime(2025, 3, 16, 1, 28, 58, 448, DateTimeKind.Local).AddTicks(9290),
+                            Username = "admin"
+                        });
                 });
 
             modelBuilder.Entity("CoffeeHub.Models.Domains.Customer", b =>
@@ -160,8 +188,8 @@ namespace CoffeeHub.Migrations
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("date");
 
-                    b.Property<string>("IsAvailable")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -183,6 +211,72 @@ namespace CoffeeHub.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Customers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("00000000-0000-0000-0000-000000000002"),
+                            Address = "Ho Chi Minh City",
+                            AuthId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 3, 16, 1, 28, 58, 448, DateTimeKind.Local).AddTicks(7250),
+                            CustomerLevel = 0,
+                            DateOfBirth = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsAvailable = true,
+                            Name = "Guest",
+                            PhoneNumber = "0000000000",
+                            Point = 0,
+                            UpdatedAt = new DateTime(2025, 3, 16, 1, 28, 58, 448, DateTimeKind.Local).AddTicks(7250)
+                        });
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.Domains.Delivery", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.Property<string>("ReceiverName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("Status")
+                        .HasMaxLength(50)
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.ToTable("Deliveries", (string)null);
                 });
 
             modelBuilder.Entity("CoffeeHub.Models.Domains.Employee", b =>
@@ -233,6 +327,22 @@ namespace CoffeeHub.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Employees");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("00000000-0000-0000-0000-000000000001"),
+                            Address = "Ho Chi Minh City",
+                            AuthId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 3, 16, 1, 28, 58, 437, DateTimeKind.Local).AddTicks(3670),
+                            DateOfBirth = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateStartWork = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            MonthlySalary = 0m,
+                            Name = "Online System",
+                            PhoneNumber = "0000000000",
+                            Role = 0,
+                            UpdatedAt = new DateTime(2025, 3, 16, 1, 28, 58, 448, DateTimeKind.Local).AddTicks(2170)
+                        });
                 });
 
             modelBuilder.Entity("CoffeeHub.Models.Domains.Ingredient", b =>
@@ -428,6 +538,9 @@ namespace CoffeeHub.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("CustomerId");
+
+                    b.Property<Guid?>("DeliveryId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("DiscountAmount")
                         .HasColumnType("decimal(18,2)");
@@ -697,6 +810,17 @@ namespace CoffeeHub.Migrations
                     b.Navigation("Employee");
                 });
 
+            modelBuilder.Entity("CoffeeHub.Models.Domains.Delivery", b =>
+                {
+                    b.HasOne("CoffeeHub.Models.Domains.Order", "Order")
+                        .WithOne("Delivery")
+                        .HasForeignKey("CoffeeHub.Models.Domains.Delivery", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("CoffeeHub.Models.Domains.Ingredient", b =>
                 {
                     b.HasOne("CoffeeHub.Models.Domains.IngredientCategory", "IngredientCategory")
@@ -871,6 +995,8 @@ namespace CoffeeHub.Migrations
 
             modelBuilder.Entity("CoffeeHub.Models.Domains.Order", b =>
                 {
+                    b.Navigation("Delivery");
+
                     b.Navigation("OrderDetails");
                 });
 

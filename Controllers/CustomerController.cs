@@ -2,6 +2,8 @@ using AutoMapper;
 using CoffeeHub.Models;
 using CoffeeHub.Models.Domains;
 using CoffeeHub.Models.DTOs.CustomerDtos;
+using CoffeeHub.Models.DTOs.DeliveryDtos;
+using CoffeeHub.Models.DTOs.OrderDtos;
 using CoffeeHub.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +15,13 @@ namespace CoffeeHub.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;
+        private readonly IDeliveryService _deliveryService;
         private readonly IMapper _mapper;
 
-        public CustomerController(ICustomerService customerService, IMapper mapper)
+        public CustomerController(ICustomerService customerService, IDeliveryService deliveryService, IMapper mapper)
         {
             _customerService = customerService;
+            _deliveryService = deliveryService;
             _mapper = mapper;
         }
 
@@ -25,6 +29,14 @@ namespace CoffeeHub.Controllers
         public async Task<IActionResult> GetById(Guid id)
         {
             var customer = await _customerService.GetWithAuthByIdAsync(id);
+            var customerDto = _mapper.Map<CustomerDto>(customer);
+            return Ok(customerDto);
+        }
+
+        [HttpGet("getByAuthId/{id}")]
+        public async Task<IActionResult> GetByAuthId(Guid id)
+        {
+            var customer = await _customerService.GetByAuthIdAsync(id);
             var customerDto = _mapper.Map<CustomerDto>(customer);
             return Ok(customerDto);
         }

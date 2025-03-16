@@ -43,6 +43,15 @@ namespace CoffeeHub.Controllers
             return Ok(employeeDtos);
         }
 
+        [HttpGet("schedule")]
+        public async Task<IActionResult> GetAllWithSchedule()
+        {
+            var employees = await _employeeService.GetAllWithScheduleAsync();
+            // var employeeDtos = _mapper.Map<IEnumerable<EmployeeScheduleDto>>(employees);
+
+            return Ok(employees);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateWithAuth([FromBody] EmployeeAddDto employeeAddDto)
         {

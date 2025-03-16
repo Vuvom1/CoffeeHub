@@ -37,6 +37,11 @@ public class CustomerService : BaseService<Customer>, ICustomerService
         return _customerRepository.GetAllWithAuthAsync();
     }
 
+    public Task<Customer?> GetByAuthIdAsync(Guid id)
+    {
+        return _customerRepository.GetByAuthIdAsync(id);
+    }
+
     public Task<Customer?> GetByPhoneNumberAsync(string phone)
     {
         return _customerRepository.GetByPhoneNumberAsync(phone);

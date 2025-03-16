@@ -38,4 +38,9 @@ public class EmployeeService : BaseService<Employee>, IEmployeeService
 
         return addedEmployee;
     }
+
+    public Task<IEnumerable<Employee>> GetAllWithScheduleAsync()
+    {
+        return _employeeRepository.GetAllWithScheduleAsync();
+    }
 }

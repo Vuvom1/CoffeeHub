@@ -1,5 +1,6 @@
 using AutoMapper;
 using CoffeeHub.Models.Domains;
+using CoffeeHub.Models.DTOs.DeliveryDtos;
 using CoffeeHub.Models.DTOs.OrderDetailDtos;
 using CoffeeHub.Models.DTOs.OrderDtos;
 using CoffeeHub.Services.Interfaces;
@@ -13,11 +14,13 @@ namespace CoffeeHub.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;
+        private readonly IDeliveryService _deliveryService;
         private readonly IMapper _mapper;
 
-        public OrderController(IOrderService orderService, IMapper mapper)
+        public OrderController(IOrderService orderService, IDeliveryService deliveryService, IMapper mapper)
         {
             _orderService = orderService;
+            _deliveryService = deliveryService;
             _mapper = mapper;
         }
 
@@ -46,9 +49,8 @@ namespace CoffeeHub.Controllers
         public async Task<IActionResult> Create(OrderAddDto orderAddDto)
         {
             var order = _mapper.Map<Order>(orderAddDto);
-            var orderDetails = _mapper.Map<IEnumerable<OrderDetail>>(orderAddDto.OrderDetails);
 
-            await _orderService.AddWithDetailsAsync(order, orderDetails);
+            await _orderService.AddAsync(order);
             return StatusCode(StatusCodes.Status201Created, "Order created successfully.");
         }
     }

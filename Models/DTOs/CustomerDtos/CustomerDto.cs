@@ -11,7 +11,7 @@ public class CustomerDto
     public required DateTime DateOfBirth { get; set; }
     public required string PhoneNumber { get; set; }
     public required string Address { get; set; }
-    public required string IsAvailable { get; set; }
+    public required bool IsAvailable { get; set; }
     public int Point { get; set; }
     public CustomerLevel CustomerLevel { get; set; }
     public Guid AuthId { get; set; }

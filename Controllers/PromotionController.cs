@@ -38,10 +38,10 @@ namespace CoffeeHub.Controllers
             return Ok(promotion);
         }
 
-        [HttpGet("usable/{customerId}")]
-        public async Task<IActionResult> GetUsablePromotionsByCustomerId(Guid customerId)
+        [HttpGet("usable/{id}")]
+        public async Task<IActionResult> GetUsablePromotionsByCustomerId(Guid id)
         {
-            var promotions = await _promotionService.GetUsablePromotionsByCustomerIdAsync(customerId);
+            var promotions = await _promotionService.GetUsablePromotionsByCustomerIdAsync(id);
             return Ok(promotions);
         }
 

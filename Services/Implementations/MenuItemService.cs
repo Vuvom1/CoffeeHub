@@ -36,4 +36,15 @@ public class MenuItemService : BaseService<MenuItem>, IMenuItemService
             await _recipeRepository.AddAsync(recipe);
         }
     }
+
+    Task<IEnumerable<MenuItem>> IMenuItemService.GetPopularMenuItemsAsync(int limit)
+    {
+        return _menuItemRepository.GetPopularMenuItemsAsync(limit);
+    }
+
+    public async Task<IEnumerable<MenuItem>> GetNewestMenuItemsAsync(int limit)
+    {
+        return await _menuItemRepository.GetNewestMenuItemsAsync(limit);
+    }
+
 }

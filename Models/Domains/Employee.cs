@@ -17,7 +17,6 @@ namespace CoffeeHub.Models.Domains
     public Guid AuthId { get; set; }
     public virtual Auth Auth { get; set; } = null!;
     public virtual ICollection<Schedule> Schedules { get; set; } = new HashSet<Schedule>();
-    public virtual ICollection<Shift> Shifts { get; set; } = new HashSet<Shift>();
     public virtual ICollection<Order> Orders { get; set; } = new HashSet<Order>();
 }
 

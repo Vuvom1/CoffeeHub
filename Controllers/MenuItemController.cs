@@ -49,6 +49,24 @@ namespace CoffeeHub.Controllers
             return Ok(menuItemDtos);
         }
 
+        [HttpGet("getPopular")]
+        public async Task<IActionResult> GetPopular([FromQuery] int limit = 5)
+        {
+            var menuItems = await _menuItemService.GetPopularMenuItemsAsync(limit);
+            var menuItemDtos = _mapper.Map<IEnumerable<MenuItemDto>>(menuItems);
+
+            return Ok(menuItemDtos);
+        }
+
+        [HttpGet("getNewest")]
+        public async Task<IActionResult> GetNewest([FromQuery] int limit = 5)
+        {
+            var menuItems = await _menuItemService.GetNewestMenuItemsAsync(limit);
+            var menuItemDtos = _mapper.Map<IEnumerable<MenuItemDto>>(menuItems);
+
+            return Ok(menuItemDtos);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] MenuItemAddDto menuItemDto)
         {

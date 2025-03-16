@@ -290,3 +290,13 @@
 /Users/minhvuvo/Documents/GitHub/CoffeeHub/bin/Debug/net9.0/Credentials/martialartconnect-firebase-adminsdk-mu8yn-209d5aa0b9.json
 /Users/minhvuvo/Documents/GitHub/CoffeeHub/bin/Debug/net9.0/Firebase.Storage.dll
 /Users/minhvuvo/Documents/GitHub/CoffeeHub/bin/Debug/net9.0/appsettings.Secrets.json
+/Users/minhvuvo/Documents/GitHub/CoffeeHub/bin/Debug/net9.0/Microsoft.Extensions.Caching.Abstractions.dll
+/Users/minhvuvo/Documents/GitHub/CoffeeHub/bin/Debug/net9.0/Microsoft.Extensions.Caching.Memory.dll
+/Users/minhvuvo/Documents/GitHub/CoffeeHub/bin/Debug/net9.0/Microsoft.Extensions.Configuration.Abstractions.dll
+/Users/minhvuvo/Documents/GitHub/CoffeeHub/bin/Debug/net9.0/Microsoft.Extensions.DependencyInjection.dll
+/Users/minhvuvo/Documents/GitHub/CoffeeHub/bin/Debug/net9.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll
+/Users/minhvuvo/Documents/GitHub/CoffeeHub/bin/Debug/net9.0/Microsoft.Extensions.Logging.dll
+/Users/minhvuvo/Documents/GitHub/CoffeeHub/bin/Debug/net9.0/Microsoft.Extensions.Logging.Abstractions.dll
+/Users/minhvuvo/Documents/GitHub/CoffeeHub/bin/Debug/net9.0/Microsoft.Extensions.Options.dll
+/Users/minhvuvo/Documents/GitHub/CoffeeHub/bin/Debug/net9.0/Microsoft.Extensions.Primitives.dll
+/Users/minhvuvo/Documents/GitHub/CoffeeHub/bin/Debug/net9.0/System.Text.Json.dll

@@ -11,7 +11,7 @@ namespace CoffeeHub.Models.Domains
         public DateTime? DateOfBirth { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Address { get; set; }
-        public string? IsAvailable { get; set; }
+        public required bool IsAvailable { get; set; }
         public int Point { get; set; } = 0;
         public CustomerLevel CustomerLevel { get; set; } = CustomerLevel.Silver;
         public Guid AuthId { get; set; }

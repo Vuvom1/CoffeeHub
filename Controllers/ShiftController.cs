@@ -1,5 +1,7 @@
+using AutoMapper;
 using CoffeeHub.Models;
 using CoffeeHub.Models.Domains;
+using CoffeeHub.Models.DTOs.ShiftDtos;
 using CoffeeHub.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,16 +13,20 @@ namespace CoffeeHub.Controllers
     public class ShiftController : ControllerBase
     {
         private readonly IShiftService _shiftService;
-        public ShiftController(IShiftService shiftService)
+        private readonly IMapper _mapper;
+        public ShiftController(IShiftService shiftService, IMapper mapper)
         {
             _shiftService = shiftService;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var shifts = await _shiftService.GetAllAsync();
-            return Ok(shifts);
+            var shiftDtos = _mapper.Map<IEnumerable<ShiftDto>>(shifts);
+
+            return Ok(shiftDtos);
         }
 
         [HttpGet("{id}")]
@@ -31,13 +37,17 @@ namespace CoffeeHub.Controllers
             {
                 return NotFound();
             }
-            return Ok(shift);
+
+            var shiftDto = _mapper.Map<ShiftDto>(shift);
+            return Ok(shiftDto);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Shift shift)
+        public async Task<IActionResult> Create(ShiftAddDto shiftAddDto)
         {
+            var shift = _mapper.Map<Shift>(shiftAddDto);
             await _shiftService.AddAsync(shift);
+            
             return StatusCode(StatusCodes.Status201Created);
         }
 

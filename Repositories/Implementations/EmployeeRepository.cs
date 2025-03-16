@@ -21,6 +21,14 @@ public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
         return Task.FromResult(employee);
     }
 
+    public async Task<IEnumerable<Employee>> GetAllWithScheduleAsync()
+    {
+        return await _context.Employees
+            .Include(x => x.Schedules)
+                .ThenInclude(x => x.Shift)
+            .ToListAsync();
+    }
+
     public override async Task<Employee> GetByIdAsync(Guid id)
     {
         var employee = await _context.Employees.Include(x => x.Auth).FirstOrDefaultAsync(x => x.Id == id) ?? throw new InvalidOperationException($"Employee with ID {id} not found.");

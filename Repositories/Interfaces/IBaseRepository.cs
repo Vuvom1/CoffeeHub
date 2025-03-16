@@ -12,7 +12,9 @@ public interface IBaseRepository<T> where T : BaseEntity
     Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
     Task AddAsync(T entity);
     Task AddRangeAsync(IEnumerable<T> entities);
+    Task AddRange(IEnumerable<T> entities);
     Task<T> AddAndReturnAsync(T entity);
     Task UpdateAsync(T entity);
+    Task<T> UpdateAndReturnAsync(T entity);
     Task DeleteAsync(T entity);
 }

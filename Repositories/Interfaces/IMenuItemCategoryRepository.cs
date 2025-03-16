@@ -6,5 +6,5 @@ namespace CoffeeHub.Repositories.Implementations;
 
 public interface IMenuItemCategoryRepository : IBaseRepository<MenuItemCategory>
 {
-
+    Task<IEnumerable<MenuItemCategory>> GetAllWithMenuItemsAsync();
 }

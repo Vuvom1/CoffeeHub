@@ -12,4 +12,9 @@ public class MenuItemCategoryService : BaseService<MenuItemCategory>, IMenuItemC
     {
         _menuItemCategoryRepository = menuItemCategoryRepository;
     }
+
+    public async Task<IEnumerable<MenuItemCategory>> GetAllWithMenuItemsAsync()
+    {
+        return await _menuItemCategoryRepository.GetAllWithMenuItemsAsync();
+    }
 }
