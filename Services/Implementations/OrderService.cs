@@ -16,7 +16,8 @@ namespace CoffeeHub.Services.Implementations
         private readonly IPromotionRepository _promotionRepository;
         private readonly IMenuItemRepository _menuItemRepository;
         private readonly ICustomerRepository _customerRepository;
-        private readonly IEmployeeRepository _employeeRepository;
+        private readonly IIngredientRepository _ingredientRepository;
+        private readonly IRecipeRepository _recipeRepository;
         private readonly IDbContextFactory<CoffeeHubContext> _dbContextFactory;
 
         public OrderService(
@@ -26,6 +27,8 @@ namespace CoffeeHub.Services.Implementations
             IMenuItemRepository menuItemRepository,
             ICustomerRepository customerRepository, 
             IEmployeeRepository employeeRepository,
+            IIngredientRepository ingredientRepository,
+            IRecipeRepository recipeRepository,
             IDbContextFactory<CoffeeHubContext> dbContextFactory) : base(orderRepository)
         {
             _orderRepository = orderRepository;
@@ -33,6 +36,8 @@ namespace CoffeeHub.Services.Implementations
             _promotionRepository = promotionRepository;
             _menuItemRepository = menuItemRepository;
             _customerRepository = customerRepository;
+            _ingredientRepository = ingredientRepository;
+            _recipeRepository = recipeRepository;
             _dbContextFactory = dbContextFactory;
         }
 
@@ -49,6 +54,42 @@ namespace CoffeeHub.Services.Implementations
             {
                 var menuItem = _menuItemRepository.GetByIdAsync(orderDetail.MenuItemId);
                 var price = orderDetail.Quantity * menuItem.Result.Price;
+
+                // Check if the menu item is available
+                if (menuItem.Result.IsAvailable == false)
+                {
+                    throw new InvalidOperationException($"Menu item with name {menuItem.Result.Name} is not available.");
+                }
+
+                // Check if the ingredient is enough
+                var recipes = await _recipeRepository.GetByMenuItemIdAsync(orderDetail.MenuItemId);
+                var ingredientQuantities = new Dictionary<Guid, int>();
+                foreach (var recipe in recipes)
+                {
+                    ingredientQuantities.Add(recipe.IngredientId, (int)recipe.Quantity * orderDetail.Quantity);
+                }
+
+                var isEnough = await _ingredientRepository.IsEnoughAsync(ingredientQuantities);
+                if (!isEnough)
+                {
+                    throw new InvalidOperationException($"Ingredient is not enough for menu item with name {menuItem.Result.Name}.");
+                }
+
+                // Update ingredient stock
+                using var context = _dbContextFactory.CreateDbContext();
+                foreach (var ingredientQuantity in ingredientQuantities)
+                {
+                    var ingredient = await context.Ingredients.FindAsync(ingredientQuantity.Key);
+                    if (ingredient != null)
+                    {
+                        ingredient.TotalQuantity -= ingredientQuantity.Value;
+                        await context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"Ingredient with id {ingredientQuantity.Key} not found.");
+                    }
+                }
 
                 totalPrice += price;
                 totalQuantity += orderDetail.Quantity;

@@ -23,4 +23,19 @@ public class IngredientRepository : BaseRepository<Ingredient>, IIngredientRepos
     {
         return _context.Ingredients.Where(i => ids.Contains(i.Id)).ToListAsync();
     }
+
+    public async Task<bool> IsEnoughAsync(Dictionary<Guid, int> ingredientQuantities)
+    {
+        foreach (var ingredientQuantity in ingredientQuantities)
+        {
+            var ingredient = await _context.Ingredients.FindAsync(ingredientQuantity.Key);
+
+            if (ingredient == null || ingredient.TotalQuantity < ingredientQuantity.Value)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
