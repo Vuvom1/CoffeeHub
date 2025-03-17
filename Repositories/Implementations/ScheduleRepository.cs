@@ -12,4 +12,19 @@ public class ScheduleRepository : BaseRepository<Schedule>, IScheduleRepository
     {
         _context = context;
     }
+
+    public Task<decimal> GetTotalSchedulesTimeByShiftAsync(DateTime startDate, DateTime endDate)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<decimal> GetTotalSchedulesTimeByShiftAsync(Guid shiftId, DateTime startDate, DateTime endDate)
+    {
+        var totalSchedulesTime = _context.Schedules
+            .Where(s => s.ShiftId == shiftId && s.Date >= startDate && s.Date <= endDate)
+            .AsEnumerable()
+            .Sum(s => (decimal)(s.Shift.EndTime - s.Shift.StartTime).TotalHours);
+
+        return Task.FromResult(totalSchedulesTime);
+    }
 }

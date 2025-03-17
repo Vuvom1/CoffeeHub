@@ -26,6 +26,8 @@ public class IngredientStockService : BaseService<IngredientStock>, IIngredientS
         ingredient.TotalQuantity += entity.Quantity;
         await _ingredientRepository.UpdateAsync(ingredient);
 
+        entity.TotalCostPrice = entity.Quantity * entity.CostPrice; 
+
         await base.AddAsync(entity);
     }
 }

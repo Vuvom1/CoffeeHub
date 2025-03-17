@@ -20,4 +20,22 @@ public class IngredientStockRepository : BaseRepository<IngredientStock>, IIngre
             .Include(i => i.Ingredient)
             .ToListAsync();
     }
+
+    public Task<decimal> GetTotalStockCostAsync(DateTime startDate, DateTime endDate)
+    {
+        var totalStockCost = _context.IngredientStocks
+            .Where(i => i.CreatedAt >= startDate && i.CreatedAt <= endDate)
+            .Sum(i => i.Quantity * i.CostPrice);
+
+        return Task.FromResult(totalStockCost);
+    }
+
+    public Task<decimal> GetTotalStockQuantityAsync(DateTime startDate, DateTime endDate)
+    {
+        var totalStockQuantity = _context.IngredientStocks
+            .Where(i => i.CreatedAt >= startDate && i.CreatedAt <= endDate)
+            .Sum(i => i.Quantity);
+
+        return Task.FromResult(totalStockQuantity);
+    }
 }

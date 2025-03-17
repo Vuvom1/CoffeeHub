@@ -37,6 +37,8 @@ builder.Services.AddDbContextFactory<CoffeeHubContext>(options =>
            .ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning)), 
     ServiceLifetime.Scoped);
 
+builder.Services.AddScoped<IStatisticService, StatisticService>();
+
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 

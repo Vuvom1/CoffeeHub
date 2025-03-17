@@ -28,4 +28,22 @@ public class OrderRepository(CoffeeHubContext context) : BaseRepository<Order>(c
 
         return order;
     }
+
+    public Task<decimal> GetTotalOderRevenueAsync(DateTime startDate, DateTime endDate)
+    {
+        var totalOrderRevenue = _context.Orders
+            .Where(o => o.CreatedAt >= startDate && o.CreatedAt <= endDate)
+            .Sum(o => o.FinalAmount);
+        
+        return Task.FromResult(totalOrderRevenue);
+    }
+
+    public Task<int> GetTotalOrderQuantityAsync(DateTime startDate, DateTime endDate)
+    {
+        var totalOrderQuantity = _context.Orders
+            .Where(o => o.CreatedAt >= startDate && o.CreatedAt <= endDate)
+            .Count();
+        
+        return Task.FromResult(totalOrderQuantity);
+    }
 }
