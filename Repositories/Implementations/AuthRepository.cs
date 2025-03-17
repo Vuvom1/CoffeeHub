@@ -12,17 +12,34 @@ public class AuthRepository(CoffeeHubContext coffeeHubContext) : BaseRepository<
 {
     private new readonly CoffeeHubContext _context = coffeeHubContext;
 
+    public override async Task<Auth> GetByIdAsync(Guid id)
+    {
+        var auth = await _context.Auths.Include(x => x.Customer)
+            .Include(x => x.Employee)
+            .Include(x => x.Customer)
+            .FirstOrDefaultAsync(x => x.Id == id)
+            ?? throw new InvalidOperationException("User not found.");
+        
+
+        return auth;
+    }
+
     public async Task<Auth> Login(string username, string password)
     {
-        var user = await _context.Set<Auth>().FirstOrDefaultAsync(x => x.Username == username);
+        var user = await _context.Set<Auth>()
+            .Include(x => x.Customer)
+            .Include(x => x.Employee)
+            .Include(x => x.Admin)
+            .FirstOrDefaultAsync(x => x.Username == username);
+            
         if (user == null)
         {
-            return null;
+            throw new InvalidOperationException("User not found.");
         }
 
         if (user.PasswordHash == null || user.PasswordSalt == null || !VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
         {
-            return null;
+            throw new InvalidOperationException("Invalid password.");
         }
 
         return user;

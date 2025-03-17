@@ -56,16 +56,16 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, Ingredient ingredient)
+        public async Task<IActionResult> Update(Guid id, IngredientEditDto ingredientEditDto)
         {
-            var existingIngredient = await _ingredientService.GetByIdAsync(id);
-            if (existingIngredient == null)
+            var ingredient = await _ingredientService.GetByIdAsync(id);
+            if (ingredient == null)
             {
                 return NotFound();
             }
+            _mapper.Map(ingredientEditDto, ingredient);
             await _ingredientService.UpdateAsync(ingredient);
-            return Ok();
+            return Ok("Ingredient updated");
         }
-
     }
 }

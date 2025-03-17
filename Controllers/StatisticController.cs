@@ -97,6 +97,24 @@ namespace CoffeeHub.Controllers
             return Ok(financialStatisticByYears);
         }
 
+        // GET: api/Statistic/PopularMenuItems
+        [HttpGet("PopularMenuItems")]
+        public async Task<IActionResult> GetPopularMenuItems([FromQuery] DateTime startDate, [FromQuery] DateTime endDate, [FromQuery] int limit)
+        {
+            var popularMenuItems = await _statisticService.GetPopularMenuItemsByTimeAsync(startDate, endDate, limit);
+
+            return Ok(popularMenuItems);
+        }
+
+        // GET: api/Statistic/LeastPopularMenuItems
+        [HttpGet("LeastPopularMenuItems")]
+        public async Task<IActionResult> GetLeastPopularMenuItems([FromQuery] DateTime startDate, [FromQuery] DateTime endDate, [FromQuery] int limit)
+        {
+            var leastPopularMenuItems = await _statisticService.GetLeastPopularMenuItemsByTimeAsync(startDate, endDate, limit);
+
+            return Ok(leastPopularMenuItems);
+        }
+
 
     }
 }

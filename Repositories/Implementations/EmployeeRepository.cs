@@ -31,8 +31,13 @@ public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
 
     public override async Task<Employee> GetByIdAsync(Guid id)
     {
-        var employee = await _context.Employees.Include(x => x.Auth).FirstOrDefaultAsync(x => x.Id == id) ?? throw new InvalidOperationException($"Employee with ID {id} not found.");
-        Console.WriteLine(employee);
+        var employee = await _context.Employees.Include(x => x.Auth).FirstOrDefaultAsync(x => x.Id == id);
+
+        if (employee == null)
+        {
+            return null;
+        }
+        
         return employee;
     }
 }

@@ -1,4 +1,5 @@
 using AutoMapper;
+using CoffeeHub.Enums;
 using CoffeeHub.Models.Domains;
 using CoffeeHub.Models.DTOs.DeliveryDtos;
 using CoffeeHub.Models.DTOs.OrderDetailDtos;
@@ -52,6 +53,48 @@ namespace CoffeeHub.Controllers
 
             await _orderService.AddAsync(order);
             return StatusCode(StatusCodes.Status201Created, "Order created successfully.");
+        }
+
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateOrderStatus(Guid id, OrderStatus orderStatus)
+        {
+            await _orderService.UpadateOrderStatusAsync(id, orderStatus);
+            return Ok("Order status updated successfully.");
+        }
+
+        [HttpPut("{id}/cancel")]
+        public async Task<IActionResult> CancelOrder(Guid id)
+        {
+            await _orderService.CancelOrderAsync(id);
+            return Ok();
+        }
+
+        [HttpPut("{id}/start-processing")]
+        public async Task<IActionResult> StartProcessingOrder(Guid id)
+        {
+            await _orderService.StartProcessingOrderAsync(id);
+            return Ok();
+        }
+
+        [HttpPut("{id}/start-preparing")]
+        public async Task<IActionResult> StartPreparingOrder(Guid id)
+        {
+            await _orderService.StartPreparingOrderAsync(id);
+            return Ok();
+        }
+
+        [HttpPut("{id}/mark-ready")]
+        public async Task<IActionResult> MarkOrderAsReady(Guid id)
+        {
+            await _orderService.MarkOrderAsReadyAsync(id);
+            return Ok();
+        }
+
+        [HttpPut("{id}/complete")]
+        public async Task<IActionResult> CompleteOrder(Guid id)
+        {
+            await _orderService.CompleteOrderAsync(id);
+            return Ok();
         }
     }
 }

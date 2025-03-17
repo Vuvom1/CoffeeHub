@@ -25,7 +25,7 @@ public class IngredientStockRepository : BaseRepository<IngredientStock>, IIngre
     {
         var totalStockCost = _context.IngredientStocks
             .Where(i => i.CreatedAt >= startDate && i.CreatedAt <= endDate)
-            .Sum(i => i.Quantity * i.CostPrice);
+            .Sum(i => i.TotalCostPrice);
 
         return Task.FromResult(totalStockCost);
     }

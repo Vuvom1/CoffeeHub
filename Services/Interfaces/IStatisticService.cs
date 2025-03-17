@@ -14,7 +14,9 @@ public interface IStatisticService
     Task<IEnumerable<Ingredient>> GetIngredientsWithLowStockAsync(int limit);
     Task<IEnumerable<Ingredient>> GetIngredientsWithHighStockAsync(int limit);
     Task<IEnumerable<Ingredient>> GetIngredientsWithZeroStockAsync(int limit);
-    Task<Dictionary<string, decimal>> GetFinancialStatisticByDaysAsync(DateTime startDate, DateTime endDate);
-    Task<Dictionary<string, decimal>> GetFinancialStatisticByMonthsAsync(DateTime startDate, DateTime endDate);
-    Task<Dictionary<string, decimal>> GetFinancialStatisticByYearsAsync(DateTime startDate, DateTime endDate);
+    Task<IEnumerable<KeyValuePair<string, decimal>>> GetFinancialStatisticByDaysAsync(DateTime startDate, DateTime endDate);
+    Task<IEnumerable<KeyValuePair<string, decimal>>> GetFinancialStatisticByMonthsAsync(DateTime startDate, DateTime endDate);
+    Task<IEnumerable<KeyValuePair<string, decimal>>> GetFinancialStatisticByYearsAsync(DateTime startDate, DateTime endDate);
+    Task<IEnumerable<MenuItem>> GetPopularMenuItemsByTimeAsync(DateTime startDate, DateTime endDate, int limit);
+    Task<IEnumerable<MenuItem>> GetLeastPopularMenuItemsByTimeAsync(DateTime startDate, DateTime endDate, int limit);
 }

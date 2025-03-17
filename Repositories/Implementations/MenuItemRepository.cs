@@ -40,7 +40,9 @@ public class MenuItemRepository : BaseRepository<MenuItem>, IMenuItemRepository
 
     Task<IEnumerable<MenuItem>> IMenuItemRepository.GetPopularMenuItemsAsync(int limit)
     {
-        var orderDetailsGrouped = _context.OrderDetails.GroupBy(x => x.MenuItemId)
+        var orderDetailsGrouped = _context.OrderDetails
+            .Where(x => x.Order.Status == Enums.OrderStatus.Completed)
+            .GroupBy(x => x.MenuItemId)
             .Select(x => new { MenuItemId = x.Key, TotalQuantity = x.Sum(y => y.Quantity) })
             .OrderByDescending(x => x.TotalQuantity)
             .Take(limit)
@@ -53,5 +55,23 @@ public class MenuItemRepository : BaseRepository<MenuItem>, IMenuItemRepository
     public async Task<IEnumerable<MenuItem>> GetNewestMenuItemsAsync(int limit)
     {
         return await _context.MenuItems.OrderByDescending(x => x.CreatedAt).Take(limit).Include(x => x.MenuItemCategory).ToListAsync();
+    }
+
+    public Task<IEnumerable<MenuItem>> GetPopularMenuItemsByTimeAsync(DateTime startDate, DateTime endDate, int limit)
+    {
+        return Task.FromResult(_context.MenuItems.Include(x => x.OrderDetails)
+            .Where(x => x.OrderDetails.Any(y => y.Order.OrderDate >= startDate && y.Order.OrderDate <= endDate))
+            .OrderByDescending(x => x.OrderDetails.Sum(y => y.Quantity))
+            .Take(limit)
+            .AsEnumerable());
+    }
+
+    public Task<IEnumerable<MenuItem>> GetLeastPopularMenuItemsByTimeAsync(DateTime startDate, DateTime endDate, int limit)
+    {
+        return Task.FromResult(_context.MenuItems.Include(x => x.OrderDetails)
+            .Where(x => x.OrderDetails.Any(y => y.Order.OrderDate >= startDate && y.Order.OrderDate <= endDate))
+            .OrderBy(x => x.OrderDetails.Sum(y => y.Quantity))
+            .Take(limit)
+            .AsEnumerable());
     }
 }

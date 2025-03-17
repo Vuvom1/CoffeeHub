@@ -14,10 +14,24 @@ public class AuthController : ControllerBase
     private readonly IAuthService _authService;
     private readonly IMapper _mapper;
 
-    public AuthController(IAuthService authService, IMapper mapper)
+    public AuthController(IAuthService authService,  IMapper mapper)
     {
         _authService = authService;
+       
         _mapper = mapper;
+    }
+
+    [HttpGet("details")]
+    public async Task<IActionResult> GetDetails([FromQuery] Guid id)
+    {
+        var auth = await _authService.GetByIdAsync(id);
+        if (auth == null)
+        {
+            return NotFound();
+        }
+
+        var authDto = _mapper.Map<AuthDto>(auth);
+        return Ok(authDto);
     }
 
     [HttpPost("register")]

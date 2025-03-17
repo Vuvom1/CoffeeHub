@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CoffeeHub.Enums;
 using CoffeeHub.Models;
 using CoffeeHub.Models.Domains;
 using CoffeeHub.Repositories.Interfaces;
@@ -17,6 +18,7 @@ namespace CoffeeHub.Services.Implementations
         private readonly IMenuItemRepository _menuItemRepository;
         private readonly ICustomerRepository _customerRepository;
         private readonly IIngredientRepository _ingredientRepository;
+        private readonly IEmployeeRepository _employeeRepository;
         private readonly IRecipeRepository _recipeRepository;
         private readonly IDbContextFactory<CoffeeHubContext> _dbContextFactory;
 
@@ -35,7 +37,9 @@ namespace CoffeeHub.Services.Implementations
             _orderDetailRepository = orderDetailRepository;
             _promotionRepository = promotionRepository;
             _menuItemRepository = menuItemRepository;
+            _ingredientRepository = ingredientRepository;
             _customerRepository = customerRepository;
+            _employeeRepository = employeeRepository;
             _ingredientRepository = ingredientRepository;
             _recipeRepository = recipeRepository;
             _dbContextFactory = dbContextFactory;
@@ -47,8 +51,12 @@ namespace CoffeeHub.Services.Implementations
             var totalQuantity = 0;
             var discountAmount = 0m;
             var customerLevel = Enums.CustomerLevel.Silver;
-            
-            order.EmployeeId = new Guid("00000000-0000-0000-0000-000000000001");
+
+            //Check employee is available
+            var employee = await _employeeRepository.GetByIdAsync(order.EmployeeId);
+            if (employee == null) {
+                order.EmployeeId = new Guid("00000000-0000-0000-0000-000000000001");
+            }
             
             foreach (var orderDetail in order.OrderDetails)
             {
@@ -134,6 +142,36 @@ namespace CoffeeHub.Services.Implementations
             order.FinalAmount = totalPrice - discountAmount;
 
             await _orderRepository.AddAsync(order);
+        }
+
+        public async Task CancelOrderAsync(Guid orderId)
+        {
+            await _orderRepository.UpdateOrderStatusAsync(orderId, OrderStatus.Cancelled);
+        }
+
+        public async Task CompleteOrderAsync(Guid orderId)
+        {
+            await _orderRepository.UpdateOrderStatusAsync(orderId, OrderStatus.Completed);
+        }
+
+        public async Task MarkOrderAsReadyAsync(Guid orderId)
+        {
+            await _orderRepository.UpdateOrderStatusAsync(orderId, OrderStatus.ReadyForPickup);
+        }
+
+        public async Task StartPreparingOrderAsync(Guid orderId)
+        {
+            await _orderRepository.UpdateOrderStatusAsync(orderId, OrderStatus.Preparing);
+        }
+
+        public Task StartProcessingOrderAsync(Guid orderId)
+        {
+            return _orderRepository.UpdateOrderStatusAsync(orderId, OrderStatus.Processing);
+        }
+
+        public async Task UpadateOrderStatusAsync(Guid orderId, OrderStatus orderStatus)
+        {
+            await _orderRepository.UpdateOrderStatusAsync(orderId, orderStatus);
         }
     }
 }

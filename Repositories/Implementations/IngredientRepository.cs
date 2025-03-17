@@ -27,7 +27,6 @@ public class IngredientRepository : BaseRepository<Ingredient>, IIngredientRepos
     public Task<IEnumerable<Ingredient>> GetHighestQuantityAsync(int limit)
     {
         var ingredients = _context.Ingredients
-            .Where(i => i.TotalQuantity == _context.Ingredients.Max(i => i.TotalQuantity))
             .Take(limit)
             .OrderByDescending(i => i.TotalQuantity)
             .ThenBy(i => i.Name)
@@ -50,7 +49,6 @@ public class IngredientRepository : BaseRepository<Ingredient>, IIngredientRepos
     public Task<IEnumerable<Ingredient>> GetLowestQuantityAsync(int limit)
     {
         var ingredients = _context.Ingredients
-            .Where(i => i.TotalQuantity == _context.Ingredients.Min(i => i.TotalQuantity))
             .Take(limit)
             .OrderBy(i => i.TotalQuantity)
             .ThenBy(i => i.Name)

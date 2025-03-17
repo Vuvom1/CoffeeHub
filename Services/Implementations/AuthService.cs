@@ -5,6 +5,7 @@ using CoffeeHub.Repositories;
 using CoffeeHub.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using CoffeeHub.Enums;
+using Newtonsoft.Json;
 using CoffeeHub.Models.Domains;
 
 namespace CoffeeHub.Services.Implementations;
@@ -12,12 +13,14 @@ namespace CoffeeHub.Services.Implementations;
 public class AuthService : BaseService<Auth>, IAuthService
 {
     private readonly IAuthRepository _authRepository;
+    private readonly IEmployeeService _employeeService;
     private readonly IConfiguration _configuration;
     private readonly IEmailService _emailService;
 
-    public AuthService(IAuthRepository authRepository, IConfiguration configuration, IEmailService emailService) : base(authRepository)
+    public AuthService(IAuthRepository authRepository, IEmployeeService employeeService, IConfiguration configuration, IEmailService emailService) : base(authRepository)
     {
         _authRepository = authRepository;
+        _employeeService = employeeService;
         _configuration = configuration;
         _emailService = emailService;
     }
@@ -67,8 +70,9 @@ public class AuthService : BaseService<Auth>, IAuthService
     }
     public async Task<Auth> Login(string username, string password)
     {
-    
-        return await _authRepository.Login(username, password);
+        var user = await _authRepository.Login(username, password);
+
+        return user;
     }
 
     public async Task<bool> UserExists(string username)
@@ -85,20 +89,42 @@ public class AuthService : BaseService<Auth>, IAuthService
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var jwtKey = _configuration["Jwt:Key"];
+
         if (string.IsNullOrEmpty(jwtKey))
         {
             throw new ArgumentNullException("Jwt:Key", "JWT key is not configured.");
         }
         var key = Encoding.ASCII.GetBytes(jwtKey);
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim("username", user.Username ?? throw new ArgumentNullException(nameof(user.Username))),
+            new Claim(ClaimTypes.Email, user.Email ?? throw new ArgumentNullException(nameof(user.Email))),
+            new Claim(ClaimTypes.Role, user.Role?.ToString() ?? throw new ArgumentNullException(nameof(user.Role))),
+        };
+
+        if (user.Role == UserRole.Employee)
+        {
+            claims.Add(new Claim("id", user.Employee.Id.ToString()));
+            claims.Add(new Claim("name", user.Employee.Name));
+            claims.Add(new Claim("position", user.Employee.Role.ToString()));
+            claims.Add(new Claim("address", user.Employee.Address.ToString()));
+            claims.Add(new Claim("phoneNumber", user.Employee.PhoneNumber.ToString()));
+        } else if (user.Role == UserRole.Customer)
+        {
+            claims.Add(new Claim("id", user.Customer.Id.ToString()));
+            claims.Add(new Claim("name", user.Customer.Name ?? throw new ArgumentNullException(nameof(user.Customer.Name))));
+            claims.Add(new Claim("address", user.Customer.Address?.ToString() ?? throw new ArgumentNullException(nameof(user.Customer.Address))));
+            claims.Add(new Claim("phoneNumber", user.Customer.PhoneNumber?.ToString() ?? throw new ArgumentNullException(nameof(user.Customer.PhoneNumber))));
+        } else if (user.Role == UserRole.Admin)
+        {
+            claims.Add(new Claim("id", user.Admin.Id.ToString()));
+            claims.Add(new Claim("name", user.Admin.Name ?? throw new ArgumentNullException(nameof(user.Admin.Name))));
+        }
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Username ?? throw new ArgumentNullException(nameof(user.Username))),
-                new Claim(ClaimTypes.Email, user.Email ?? throw new ArgumentNullException(nameof(user.Email))),
-                new Claim(ClaimTypes.Role, user.Role?.ToString() ?? throw new ArgumentNullException(nameof(user.Role)))
-            }),
+            Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddDays(7),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };

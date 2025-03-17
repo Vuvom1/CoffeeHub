@@ -1,4 +1,5 @@
 using System;
+using CoffeeHub.Enums;
 using CoffeeHub.Models;
 using CoffeeHub.Models.Domains;
 using CoffeeHub.Repositories.Interfaces;
@@ -32,7 +33,7 @@ public class OrderRepository(CoffeeHubContext context) : BaseRepository<Order>(c
     public Task<decimal> GetTotalOderRevenueAsync(DateTime startDate, DateTime endDate)
     {
         var totalOrderRevenue = _context.Orders
-            .Where(o => o.CreatedAt >= startDate && o.CreatedAt <= endDate)
+            .Where(o => o.CreatedAt >= startDate && o.CreatedAt <= endDate && o.Status == OrderStatus.Completed)
             .Sum(o => o.FinalAmount);
         
         return Task.FromResult(totalOrderRevenue);
@@ -45,5 +46,19 @@ public class OrderRepository(CoffeeHubContext context) : BaseRepository<Order>(c
             .Count();
         
         return Task.FromResult(totalOrderQuantity);
+    }
+
+    public Task UpdateOrderStatusAsync(Guid orderId, OrderStatus orderStatus)
+    {
+        var order = _context.Orders.Find(orderId);
+        if (order == null)
+        {
+            throw new InvalidOperationException($"Order with id {orderId} not found.");
+        }
+
+        order.Status = orderStatus;
+        _context.Orders.Update(order);
+        _context.SaveChanges();
+        return Task.CompletedTask;
     }
 }
