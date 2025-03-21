@@ -1,5 +1,6 @@
 using AutoMapper;
 using CoffeeHub.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +20,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var admin = await _adminService.GetByIdAsync(id);
@@ -30,6 +32,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
             var admins = await _adminService.GetAllAsync();

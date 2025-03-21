@@ -5,6 +5,7 @@ using CoffeeHub.Models.DTOs.CustomerDtos;
 using CoffeeHub.Models.DTOs.DeliveryDtos;
 using CoffeeHub.Models.DTOs.OrderDtos;
 using CoffeeHub.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,12 +17,14 @@ namespace CoffeeHub.Controllers
     {
         private readonly ICustomerService _customerService;
         private readonly IDeliveryService _deliveryService;
+        private readonly IAuthService _authService;
         private readonly IMapper _mapper;
 
-        public CustomerController(ICustomerService customerService, IDeliveryService deliveryService, IMapper mapper)
+        public CustomerController(ICustomerService customerService, IDeliveryService deliveryService, IAuthService authService, IMapper mapper)
         {
             _customerService = customerService;
             _deliveryService = deliveryService;
+            _authService = authService;
             _mapper = mapper;
         }
 
@@ -42,6 +45,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
             var customers = await _customerService.GetAllWithAuthAsync();
@@ -51,6 +55,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet("phone/{phone}")]
+        [Authorize(Roles= "Admin, Employee")]
         public async Task<IActionResult> GetByPhoneNumber(string phone)
         {
             var customer = await _customerService.GetByPhoneNumberAsync(phone);
@@ -61,18 +66,8 @@ namespace CoffeeHub.Controllers
             return Ok(customer);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateWithAuth([FromBody] CustomerAddDto customerAddDto
-        )
-        {
-            var customer = _mapper.Map<Customer>(customerAddDto);
-
-            await _customerService.AddWithAuthAsync(customer, customerAddDto.AuthId);
-
-            return Ok("Employee created successfully");
-        }
-
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> Update(Guid id, CustomerDto customerDto)
         {
             var customer = _mapper.Map<Customer>(customerDto);

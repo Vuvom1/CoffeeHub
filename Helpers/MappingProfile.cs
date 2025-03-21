@@ -31,6 +31,7 @@ public class MappingProfile : Profile
         CreateMap<AuthDto, Auth>();
         CreateMap<AuthAddDto, Auth>();
         CreateMap<Auth, AuthAddDto>();
+        CreateMap<RegisterCustomerDto, Auth>();
 
         CreateMap<Employee, EmployeeDto>();
         CreateMap<EmployeeDto, Employee>();

@@ -44,5 +44,10 @@ public class BaseService<T> : IBaseService<T> where T : BaseEntity
     {
         await _repository.DeleteAsync(entity);
     }
-    
+
+
+    public async Task<T> AddAndReturnAsync(T entity)
+    {
+        return await _repository.AddAndReturnAsync(entity);
+    }
 }

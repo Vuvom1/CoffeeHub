@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/2c908cb2-c429-425b-8fb4-8441c35d3251/resourceGroups/Group1/providers/Microsoft.Web/sites/CoffeeHub",
+    "appService.deploySubpath": "publish"
+}

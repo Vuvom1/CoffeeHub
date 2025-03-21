@@ -38,7 +38,7 @@ public class AdminConfig : IEntityTypeConfiguration<Admin>
 
         builder.HasOne(x => x.Auth)
             .WithOne(x => x.Admin)
-            .HasForeignKey<Auth>(x => x.AdminId);
+            .HasForeignKey<Admin>(x => x.AuthId);
     }
 
 }

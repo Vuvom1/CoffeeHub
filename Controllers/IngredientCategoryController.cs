@@ -4,6 +4,7 @@ using CoffeeHub.Models.DTOs.IngredientCategoryDtos;
 using CoffeeHub.Models.DTOs.IngredientDtos;
 using CoffeeHub.Repositories.Interfaces;
 using CoffeeHub.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,6 +24,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin, Employee")]
         public async Task<ActionResult<IEnumerable<IngredientCategoryDto>>> GetIngredientCategories()
         {
             var ingredientCategories = await _ingredientCategoryService.GetAllAsync();
@@ -30,6 +32,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet("{id}", Name = "GetIngredientCategoryById")]
+        [Authorize(Roles = "Admin, Employee, Customer")]
         public async Task<ActionResult<IngredientCategoryDto>> GetIngredientCategoryById(Guid id)
         {
             var ingredientCategory = await _ingredientCategoryService.GetByIdAsync(id);
@@ -41,6 +44,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> CreateIngredientCategory(IngredientCategoryAddDto ingredientCategoryAddDto)
         {
             var ingredientCategory = _mapper.Map<IngredientCategory>(ingredientCategoryAddDto);
@@ -49,6 +53,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> UpdateIngredientCategory(Guid id, IngredientCategoryEditDto ingredientCategoryEditDto)
         {
             var ingredientCategory = await _ingredientCategoryService.GetByIdAsync(id);

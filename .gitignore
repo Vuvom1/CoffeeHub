@@ -1,4 +1,5 @@
 node_modules
 Credentials/*
 bin   
-appsettings.Secrets.json           
+appsettings.Secrets.json  
+publish         

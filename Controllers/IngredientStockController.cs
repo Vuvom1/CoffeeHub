@@ -2,6 +2,7 @@ using AutoMapper;
 using CoffeeHub.Models.Domains;
 using CoffeeHub.Models.DTOs.IngredientStockDtos;
 using CoffeeHub.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +21,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
             var ingredientStocks = await _ingredientStockService.GetAllAsync();
@@ -28,6 +30,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var ingredientStock = await _ingredientStockService.GetByIdAsync(id);
@@ -39,6 +42,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(IngredientStockAddDto ingredientStockAddDto)
         {
             var ingredient = _mapper.Map<IngredientStock>(ingredientStockAddDto);
@@ -48,6 +52,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(Guid id, IngredientStock ingredientStock)
         {
             var existingIngredientStock = await _ingredientStockService.GetByIdAsync(id);

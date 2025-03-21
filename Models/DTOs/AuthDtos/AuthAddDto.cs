@@ -9,5 +9,5 @@ public class AuthAddDto
     public required string Password { get; set; }
     public required string Email { get; set; }
     public bool? IsAvailable { get; set; } = true;
-    public required UserRole Role { get; set; }
+    public UserRole? Role { get; set; } = UserRole.Customer;
 }

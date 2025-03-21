@@ -3,6 +3,7 @@ using CoffeeHub.Models;
 using CoffeeHub.Models.Domains;
 using CoffeeHub.Models.DTOs.ShiftDtos;
 using CoffeeHub.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +22,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin, Employee")]
         public async Task<IActionResult> GetAll()
         {
             var shifts = await _shiftService.GetAllAsync();
@@ -30,6 +32,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin, Employee")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var shift = await _shiftService.GetByIdAsync(id);
@@ -43,6 +46,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(ShiftAddDto shiftAddDto)
         {
             var shift = _mapper.Map<Shift>(shiftAddDto);
@@ -52,6 +56,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> Update(Guid id, Shift shift)
         {
             var existingShift = await _shiftService.GetByIdAsync(id);

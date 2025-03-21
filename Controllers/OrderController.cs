@@ -5,6 +5,7 @@ using CoffeeHub.Models.DTOs.DeliveryDtos;
 using CoffeeHub.Models.DTOs.OrderDetailDtos;
 using CoffeeHub.Models.DTOs.OrderDtos;
 using CoffeeHub.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,17 +16,16 @@ namespace CoffeeHub.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;
-        private readonly IDeliveryService _deliveryService;
         private readonly IMapper _mapper;
 
-        public OrderController(IOrderService orderService, IDeliveryService deliveryService, IMapper mapper)
+        public OrderController(IOrderService orderService, IMapper mapper)
         {
             _orderService = orderService;
-            _deliveryService = deliveryService;
             _mapper = mapper;
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
             var orders = await _orderService.GetAllAsync();
@@ -34,7 +34,48 @@ namespace CoffeeHub.Controllers
             return Ok(orderDtos);
         }
 
+        [HttpGet("pendingOrProcessing")]
+        [Authorize(Policy = "CashierOnly")]
+        public async Task<IActionResult> GetPendingOrders()
+        {
+            var orders = await _orderService.GetPendingOrProcessingOrdersAsync();
+            var orderDtos = _mapper.Map<IEnumerable<OrderDto>>(orders);
+
+            return Ok(orderDtos);
+        }
+
+        [HttpGet("processingOrPreparing")]
+        [Authorize(Policy = "BaristaOnly")]
+        public async Task<IActionResult> GetProcessingOrPreparingOrders()
+        {
+            var orders = await _orderService.GetProcessingOrPreparingOrdersAsync();
+            var orderDtos = _mapper.Map<IEnumerable<OrderDto>>(orders);
+
+            return Ok(orderDtos);
+        }
+
+        [HttpGet("ready")]
+        [Authorize(Policy = "WaiterOnly")]
+        public async Task<IActionResult> GetReadyOrders()
+        {
+            var orders = await _orderService.GetReadyOrdersAsync();
+            var orderDtos = _mapper.Map<IEnumerable<OrderDto>>(orders);
+
+            return Ok(orderDtos);
+        }
+
+        [HttpGet("getByCustomerId/{id}")]
+        [Authorize(Roles = "Admin, Employee, Customer")]
+        public async Task<IActionResult> GetByCustomerId(Guid id)
+        {
+            var orders = await _orderService.GetOrdersByCustomerIdAsync(id);
+            var orderDtos = _mapper.Map<IEnumerable<OrderDto>>(orders);
+
+            return Ok(orderDtos);
+        }
+        
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin, Employee, Customer")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var order = await _orderService.GetByIdAsync(id);
@@ -47,6 +88,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin, Employee, Customer")]
         public async Task<IActionResult> Create(OrderAddDto orderAddDto)
         {
             var order = _mapper.Map<Order>(orderAddDto);
@@ -56,6 +98,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPut("{id}/status")]
+        [Authorize(Roles= "Admin, Employee")]
         public async Task<IActionResult> UpdateOrderStatus(Guid id, OrderStatus orderStatus)
         {
             await _orderService.UpadateOrderStatusAsync(id, orderStatus);
@@ -63,6 +106,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPut("{id}/cancel")]
+        [Authorize(Roles = "Admin, Employee, Customer")]
         public async Task<IActionResult> CancelOrder(Guid id)
         {
             await _orderService.CancelOrderAsync(id);

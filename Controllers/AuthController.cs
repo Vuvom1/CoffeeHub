@@ -4,20 +4,23 @@ using AutoMapper;
 using CoffeeHub.Models.DTOs.AuthDtos;
 using CoffeeHub.Models.Domains;
 using CoffeeHub.Enums;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CoffeeHub.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[AllowAnonymous]
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
     private readonly IMapper _mapper;
 
-    public AuthController(IAuthService authService,  IMapper mapper)
+    public AuthController(IAuthService authService, IMapper mapper)
     {
         _authService = authService;
-       
+
         _mapper = mapper;
     }
 
@@ -55,23 +58,13 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register-customer")]
-    public async Task<IActionResult> RegisterCustomer([FromBody] RegisterDto registerDto)
+    public async Task<IActionResult> RegisterCustomer([FromBody] RegisterCustomerDto registerDto)
     {
-        try
-        {
-            var auth = _mapper.Map<Auth>(registerDto);
-            if (string.IsNullOrEmpty(registerDto.Password))
-            {
-                return BadRequest(new { message = "Password cannot be null or empty" });
-            }
+        var auth = _mapper.Map<Auth>(registerDto);
+        var customer = _mapper.Map<Customer>(registerDto.Customer);
 
-            var registeredAuth = await _authService.Register(auth, registerDto.Password);
-            return Ok("Customer registered successfully");
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+        await _authService.RegisterCustomer(auth, customer, registerDto.Password);
+        return Ok("Customer registered successfully");
     }
 
     [HttpPost("register-employee")]
@@ -99,7 +92,7 @@ public class AuthController : ControllerBase
         }
 
         var userRole = user.Role.ToString();
-        var isVerified = user.AdminId != null || user.EmployeeId != null || user.CustomerId != null;
+        var isVerified = user.Admin != null || user.Employee != null || user.Customer != null;
 
         var token = _authService.GenerateJwtToken(user);
         return Ok(new { token, userRole, isVerified });

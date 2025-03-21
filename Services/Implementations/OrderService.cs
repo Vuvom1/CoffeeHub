@@ -45,6 +45,8 @@ namespace CoffeeHub.Services.Implementations
             _dbContextFactory = dbContextFactory;
         }
 
+        
+
         public override async Task AddAsync(Order order)
         {
             var totalPrice = 0m;
@@ -152,6 +154,41 @@ namespace CoffeeHub.Services.Implementations
         public async Task CompleteOrderAsync(Guid orderId)
         {
             await _orderRepository.UpdateOrderStatusAsync(orderId, OrderStatus.Completed);
+        }
+
+        public Task<IEnumerable<Order>> GetOrdersByCustomerIdAsync(Guid customerId)
+        {
+            return _orderRepository.GetOrdersByCustomerIdAsync(customerId);
+        }
+
+        public Task<IEnumerable<Order>> GetPendingOrProcessingOrdersAsync()
+        {
+            var orderStatuses = new List<OrderStatus>
+            {
+                OrderStatus.Pending,
+                OrderStatus.Processing
+            };
+            return _orderRepository.GetOrdersByStatusesAsync(orderStatuses);
+        }
+
+
+        public Task<IEnumerable<Order>> GetProcessingOrPreparingOrdersAsync()
+        {
+            var orderStatuses = new List<OrderStatus>
+            {
+                OrderStatus.Processing,
+                OrderStatus.Preparing
+            };
+            return _orderRepository.GetOrdersByStatusesAsync(orderStatuses);
+        }
+
+        public Task<IEnumerable<Order>> GetReadyOrdersAsync()
+        {
+            var orderStatuses = new List<OrderStatus>
+            {
+                OrderStatus.ReadyForPickup
+            };
+            return _orderRepository.GetOrdersByStatusesAsync(orderStatuses);
         }
 
         public async Task MarkOrderAsReadyAsync(Guid orderId)

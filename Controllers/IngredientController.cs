@@ -3,6 +3,7 @@ using AutoMapper;
 using CoffeeHub.Models.Domains;
 using CoffeeHub.Models.DTOs.IngredientDtos;
 using CoffeeHub.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +22,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin, Employee")]
         public async Task<IActionResult> GetAll()
         {
             var ingredients = await _ingredientService.GetAllAsync();
@@ -30,6 +32,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin, Employee")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var ingredient = await _ingredientService.GetByIdAsync(id);
@@ -41,6 +44,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet("ids")]
+        [Authorize(Roles = "Admin, Employee")]
         public async Task<IActionResult> GetByIds([FromQuery] IEnumerable<Guid> ids)
         {
             var ingredients = await _ingredientService.GetByIdsAsync(ids);
@@ -48,6 +52,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(IngredientAddDto ingredientAddDto)
         {
             var ingredient = _mapper.Map<Ingredient>(ingredientAddDto);
@@ -56,6 +61,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(Guid id, IngredientEditDto ingredientEditDto)
         {
             var ingredient = await _ingredientService.GetByIdAsync(id);

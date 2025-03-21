@@ -2,6 +2,7 @@ using AutoMapper;
 using CoffeeHub.Models.Domains;
 using CoffeeHub.Models.DTOs.RecipeDtos;
 using CoffeeHub.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +22,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin, Employee")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var recipe = await _recipeService.GetByIdAsync(id);
@@ -32,6 +34,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet("menu-item/{menuItemId}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetByMenuItemId(Guid menuItemId)
         {
             var recipes = await _recipeService.GetByMenuItemIdAsync(menuItemId);
@@ -41,6 +44,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin, Employee")]
         public async Task<IActionResult> GetAll()
         {
             var recipes = await _recipeService.GetAllAsync();
@@ -48,6 +52,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(RecipeAddDto recipeAddDto)
         {
             var recipe = _mapper.Map<Recipe>(recipeAddDto);
@@ -57,6 +62,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(Guid id, Recipe recipe)
         {
             var existingRecipe = await _recipeService.GetByIdAsync(id);
@@ -68,7 +74,9 @@ namespace CoffeeHub.Controllers
             return Ok("Recipe updated successfully");
         }
 
+
         [HttpPut("menu-item/{menuItemId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateByMenuItemId(Guid menuItemId, RecipeIngredientEditDto[] recipeIngredientEditDtos)
         {
             var recipes = _mapper.Map<Recipe[]>(recipeIngredientEditDtos);

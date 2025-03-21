@@ -35,7 +35,7 @@ public class CustomerConfig : IEntityTypeConfiguration<Customer>
 
         builder.HasOne(x => x.Auth)
             .WithOne(x => x.Customer)
-            .HasForeignKey<Auth>(x => x.CustomerId); 
+            .HasForeignKey<Customer>(x => x.AuthId);
 
         builder.HasMany(x => x.Orders)
             .WithOne(x => x.Customer)

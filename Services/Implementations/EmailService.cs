@@ -1,7 +1,6 @@
 using System;
-using System.Net;
-using System.Net.Mail;
 using System.Threading.Tasks;
+using Azure.Communication.Email;
 using Microsoft.Extensions.Configuration;
 using CoffeeHub.Services.Interfaces;
 
@@ -15,27 +14,18 @@ public class EmailService : IEmailService
     {
         _configuration = configuration;
     }
+
     public async Task SendEmailAsync(string toEmail, string subject, string message)
     {
-        var smtpSettings = _configuration.GetSection("Smtp");
-        var host = smtpSettings["Host"];
-        var portString = smtpSettings["Port"];
-        if (string.IsNullOrEmpty(portString))
-        {
-            throw new InvalidOperationException("SMTP port is not configured.");
-        }
-        var port = int.Parse(portString);
-        var username = smtpSettings["Username"];
-        var password = smtpSettings["Password"];
-        var fromEmail = smtpSettings["FromEmail"];
-        var fromName = smtpSettings["FromName"];
+        var azureCommSettings = _configuration.GetSection("AzureCommunication");
+        var connectionString = azureCommSettings["ConnectionString"];
+        var fromEmail = azureCommSettings["FromEmail"];
+        var fromName = azureCommSettings["FromName"];
 
-        System.Console.WriteLine($"host: {host}");
-        System.Console.WriteLine($"port: {port}");
-        System.Console.WriteLine($"username: {username}");
-        System.Console.WriteLine($"password: {password}");
-        System.Console.WriteLine($"fromEmail: {fromEmail}");
-        System.Console.WriteLine($"fromName: {fromName}");
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            throw new InvalidOperationException("Azure Communication Service connection string is not configured.");
+        }
 
         if (string.IsNullOrEmpty(fromEmail))
         {
@@ -49,32 +39,27 @@ public class EmailService : IEmailService
 
         try
         {
-            var smtpClient = new SmtpClient(host)
+            var emailClient = new EmailClient(connectionString);
+
+            var emailContent = new EmailContent(subject)
             {
-                Port = port,
-                EnableSsl = true,
-                UseDefaultCredentials = false, 
-                Credentials = new NetworkCredential(username, password)
+                PlainText = message,
+                Html = message
             };
 
-            var mailMessage = new MailMessage
+            var emailMessage = new EmailMessage(fromEmail, toEmail, emailContent);
+
+            var sendResult = await emailClient.SendAsync(Azure.WaitUntil.Completed, emailMessage);
+
+            if (!sendResult.HasCompleted)
             {
-                From = new MailAddress(fromEmail, fromName),
-                Subject = subject,
-                Body = message,
-                IsBodyHtml = true,
-            };
-            mailMessage.To.Add(toEmail);
-
-
-
-            await smtpClient.SendMailAsync(mailMessage);
+                throw new InvalidOperationException("Failed to send email.");
+            }
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
             throw;
         }
-
     }
 }

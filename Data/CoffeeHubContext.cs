@@ -4,10 +4,12 @@ using CoffeeHub.Enums;
 using CoffeeHub.Data.DataConfig;
 using CoffeeHub.Models.Domains;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace CoffeeHub.Models;
 
-public class CoffeeHubContext : DbContext
+public class CoffeeHubContext : IdentityDbContext<IdentityUser, IdentityRole, string>
 {
     public CoffeeHubContext(DbContextOptions<CoffeeHubContext> options) : base(options)
     {
@@ -65,6 +67,40 @@ public class CoffeeHubContext : DbContext
         Guid guestId = new("00000000-0000-0000-0000-000000000002");
         Guid adminId = new("00000000-0000-0000-0000-000000000003");
         Guid adminAuthId = new("00000000-0000-0000-0000-000000000004");
+        Guid employeeAuthId = new("00000000-0000-0000-0000-000000000005");
+        Guid guestAuthId = new("00000000-0000-0000-0000-000000000006");
+
+        modelBuilder.Entity<Auth>().HasData(
+            new Auth
+            {
+            Id = adminAuthId,
+            Username = "admin",
+            PasswordHash = Convert.FromHexString("F3DEAF58D30CF6E08E8D5FEA55CB026378B7F9F6FC816E30110C86219F94CCC2A24A09219BD28782945804056CFA165154D22F69042FD8D020E56F2F001CF201"),
+            PasswordSalt = Convert.FromHexString("E960C521B61E478EE05FC509CE23931FDB659097A71C5CA30184E4C6A046F297C6508F7A4206003EAB907E46EA5C8CC6C073DA1680E5A6B47C7667FE3E013DAC216D01FE5BF9BA32FCBCE7E4CE1861EAA7897B7FBC505916B85ACB09574F8D474B4A62F377DD079D0BC56C96ABF675AA4B1D05DC865D57D9626EF5E797C99DE0"),
+            Role = UserRole.Admin,
+            Email = "admin@gmail.com"
+            },
+
+            new Auth
+            {
+            Id = employeeAuthId,
+            Username = "system",  
+            PasswordHash = Convert.FromHexString("F3DEAF58D30CF6E08E8D5FEA55CB026378B7F9F6FC816E30110C86219F94CCC2A24A09219BD28782945804056CFA165154D22F69042FD8D020E56F2F001CF201"),
+            PasswordSalt = Convert.FromHexString("E960C521B61E478EE05FC509CE23931FDB659097A71C5CA30184E4C6A046F297C6508F7A4206003EAB907E46EA5C8CC6C073DA1680E5A6B47C7667FE3E013DAC216D01FE5BF9BA32FCBCE7E4CE1861EAA7897B7FBC505916B85ACB09574F8D474B4A62F377DD079D0BC56C96ABF675AA4B1D05DC865D57D9626EF5E797C99DE0"),
+            Role = UserRole.Employee,
+            Email = ""
+            },
+
+            new Auth
+            {
+            Id = guestAuthId,
+            Username = "guest",     
+            PasswordHash = Convert.FromHexString("F3DEAF58D30CF6E08E8D5FEA55CB026378B7F9F6FC816E30110C86219F94CCC2A24A09219BD28782945804056CFA165154D22F69042FD8D020E56F2F001CF201"),
+            PasswordSalt = Convert.FromHexString("E960C521B61E478EE05FC509CE23931FDB659097A71C5CA30184E4C6A046F297C6508F7A4206003EAB907E46EA5C8CC6C073DA1680E5A6B47C7667FE3E013DAC216D01FE5BF9BA32FCBCE7E4CE1861EAA7897B7FBC505916B85ACB09574F8D474B4A62F377DD079D0BC56C96ABF675AA4B1D05DC865D57D9626EF5E797C99DE0"),
+            Role = UserRole.Customer,
+            Email = ""
+            }
+        );
 
         modelBuilder.Entity<Employee>().HasData(
             new Employee
@@ -75,6 +111,7 @@ public class CoffeeHubContext : DbContext
                 PhoneNumber = "0000000000", 
                 MonthlySalary = 0,
                 Address = "Ho Chi Minh City",
+                AuthId = employeeAuthId,
                 Role = EmployeeRole.Cashier,
                 DateStartWork = new DateTime(2020, 1, 1)
             }
@@ -88,6 +125,7 @@ public class CoffeeHubContext : DbContext
                 DateOfBirth = new DateTime(2000, 1, 1),
                 PhoneNumber = "0000000000",
                 Address = "Ho Chi Minh City",
+                AuthId = guestAuthId,
                 IsAvailable = true,
             }
         );
@@ -101,19 +139,6 @@ public class CoffeeHubContext : DbContext
                 PhoneNumber = "0000000000",
                 Address = "Ho Chi Minh City",
                 AuthId = adminAuthId
-            }
-        );
-
-        modelBuilder.Entity<Auth>().HasData(
-            new Auth
-            {
-            Id = adminAuthId,
-            Username = "admin",
-            PasswordHash = Convert.FromHexString("F3DEAF58D30CF6E08E8D5FEA55CB026378B7F9F6FC816E30110C86219F94CCC2A24A09219BD28782945804056CFA165154D22F69042FD8D020E56F2F001CF201"),
-            PasswordSalt = Convert.FromHexString("E960C521B61E478EE05FC509CE23931FDB659097A71C5CA30184E4C6A046F297C6508F7A4206003EAB907E46EA5C8CC6C073DA1680E5A6B47C7667FE3E013DAC216D01FE5BF9BA32FCBCE7E4CE1861EAA7897B7FBC505916B85ACB09574F8D474B4A62F377DD079D0BC56C96ABF675AA4B1D05DC865D57D9626EF5E797C99DE0"),
-            Role = UserRole.Admin,
-            AdminId = adminId, 
-            Email = "admin@gmail.com"
             }
         );
 

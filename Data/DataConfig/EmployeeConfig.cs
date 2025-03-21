@@ -43,7 +43,8 @@ public class EmployeeConfig : IEntityTypeConfiguration<Employee>
 
         builder.HasOne(x => x.Auth)
             .WithOne(x => x.Employee)
-            .HasForeignKey<Auth>(x => x.EmployeeId);
+            .HasForeignKey<Employee>(x => x.AuthId);
+
 
         builder.HasMany(x => x.Orders)
             .WithOne(x => x.Employee)

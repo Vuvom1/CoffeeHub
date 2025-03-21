@@ -62,6 +62,9 @@ namespace CoffeeHub.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AuthId")
+                        .IsUnique();
+
                     b.ToTable("Admins");
 
                     b.HasData(
@@ -70,12 +73,12 @@ namespace CoffeeHub.Migrations
                             Id = new Guid("00000000-0000-0000-0000-000000000003"),
                             Address = "Ho Chi Minh City",
                             AuthId = new Guid("00000000-0000-0000-0000-000000000004"),
-                            CreatedAt = new DateTime(2025, 3, 17, 12, 27, 40, 957, DateTimeKind.Local).AddTicks(3080),
+                            CreatedAt = new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(5040),
                             DateOfBirth = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             MonthlySalary = 0m,
                             Name = "Admin",
                             PhoneNumber = "0000000000",
-                            UpdatedAt = new DateTime(2025, 3, 17, 12, 27, 40, 957, DateTimeKind.Local).AddTicks(3080)
+                            UpdatedAt = new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(5050)
                         });
                 });
 
@@ -86,23 +89,14 @@ namespace CoffeeHub.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("NEWID()");
 
-                    b.Property<Guid?>("AdminId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasAnnotation("RegularExpression", "^([\\w\\.\\-]+)@([\\w\\-]+)((\\.(\\w){2,3})+)$");
-
-                    b.Property<Guid?>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool?>("IsAvailable")
                         .ValueGeneratedOnAdd()
@@ -132,32 +126,41 @@ namespace CoffeeHub.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AdminId")
-                        .IsUnique()
-                        .HasFilter("[AdminId] IS NOT NULL");
-
-                    b.HasIndex("CustomerId")
-                        .IsUnique()
-                        .HasFilter("[CustomerId] IS NOT NULL");
-
-                    b.HasIndex("EmployeeId")
-                        .IsUnique()
-                        .HasFilter("[EmployeeId] IS NOT NULL");
-
                     b.ToTable("Auths");
 
                     b.HasData(
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000004"),
-                            AdminId = new Guid("00000000-0000-0000-0000-000000000003"),
-                            CreatedAt = new DateTime(2025, 3, 17, 12, 27, 40, 957, DateTimeKind.Local).AddTicks(4250),
+                            CreatedAt = new DateTime(2025, 3, 20, 23, 33, 47, 592, DateTimeKind.Local).AddTicks(6380),
                             Email = "admin@gmail.com",
                             PasswordHash = new byte[] { 243, 222, 175, 88, 211, 12, 246, 224, 142, 141, 95, 234, 85, 203, 2, 99, 120, 183, 249, 246, 252, 129, 110, 48, 17, 12, 134, 33, 159, 148, 204, 194, 162, 74, 9, 33, 155, 210, 135, 130, 148, 88, 4, 5, 108, 250, 22, 81, 84, 210, 47, 105, 4, 47, 216, 208, 32, 229, 111, 47, 0, 28, 242, 1 },
                             PasswordSalt = new byte[] { 233, 96, 197, 33, 182, 30, 71, 142, 224, 95, 197, 9, 206, 35, 147, 31, 219, 101, 144, 151, 167, 28, 92, 163, 1, 132, 228, 198, 160, 70, 242, 151, 198, 80, 143, 122, 66, 6, 0, 62, 171, 144, 126, 70, 234, 92, 140, 198, 192, 115, 218, 22, 128, 229, 166, 180, 124, 118, 103, 254, 62, 1, 61, 172, 33, 109, 1, 254, 91, 249, 186, 50, 252, 188, 231, 228, 206, 24, 97, 234, 167, 137, 123, 127, 188, 80, 89, 22, 184, 90, 203, 9, 87, 79, 141, 71, 75, 74, 98, 243, 119, 221, 7, 157, 11, 197, 108, 150, 171, 246, 117, 170, 75, 29, 5, 220, 134, 93, 87, 217, 98, 110, 245, 231, 151, 201, 157, 224 },
                             Role = 0,
-                            UpdatedAt = new DateTime(2025, 3, 17, 12, 27, 40, 957, DateTimeKind.Local).AddTicks(4250),
+                            UpdatedAt = new DateTime(2025, 3, 20, 23, 33, 47, 603, DateTimeKind.Local).AddTicks(4390),
                             Username = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("00000000-0000-0000-0000-000000000005"),
+                            CreatedAt = new DateTime(2025, 3, 20, 23, 33, 47, 603, DateTimeKind.Local).AddTicks(5590),
+                            Email = "",
+                            PasswordHash = new byte[] { 243, 222, 175, 88, 211, 12, 246, 224, 142, 141, 95, 234, 85, 203, 2, 99, 120, 183, 249, 246, 252, 129, 110, 48, 17, 12, 134, 33, 159, 148, 204, 194, 162, 74, 9, 33, 155, 210, 135, 130, 148, 88, 4, 5, 108, 250, 22, 81, 84, 210, 47, 105, 4, 47, 216, 208, 32, 229, 111, 47, 0, 28, 242, 1 },
+                            PasswordSalt = new byte[] { 233, 96, 197, 33, 182, 30, 71, 142, 224, 95, 197, 9, 206, 35, 147, 31, 219, 101, 144, 151, 167, 28, 92, 163, 1, 132, 228, 198, 160, 70, 242, 151, 198, 80, 143, 122, 66, 6, 0, 62, 171, 144, 126, 70, 234, 92, 140, 198, 192, 115, 218, 22, 128, 229, 166, 180, 124, 118, 103, 254, 62, 1, 61, 172, 33, 109, 1, 254, 91, 249, 186, 50, 252, 188, 231, 228, 206, 24, 97, 234, 167, 137, 123, 127, 188, 80, 89, 22, 184, 90, 203, 9, 87, 79, 141, 71, 75, 74, 98, 243, 119, 221, 7, 157, 11, 197, 108, 150, 171, 246, 117, 170, 75, 29, 5, 220, 134, 93, 87, 217, 98, 110, 245, 231, 151, 201, 157, 224 },
+                            Role = 1,
+                            UpdatedAt = new DateTime(2025, 3, 20, 23, 33, 47, 603, DateTimeKind.Local).AddTicks(5590),
+                            Username = "system"
+                        },
+                        new
+                        {
+                            Id = new Guid("00000000-0000-0000-0000-000000000006"),
+                            CreatedAt = new DateTime(2025, 3, 20, 23, 33, 47, 603, DateTimeKind.Local).AddTicks(5600),
+                            Email = "",
+                            PasswordHash = new byte[] { 243, 222, 175, 88, 211, 12, 246, 224, 142, 141, 95, 234, 85, 203, 2, 99, 120, 183, 249, 246, 252, 129, 110, 48, 17, 12, 134, 33, 159, 148, 204, 194, 162, 74, 9, 33, 155, 210, 135, 130, 148, 88, 4, 5, 108, 250, 22, 81, 84, 210, 47, 105, 4, 47, 216, 208, 32, 229, 111, 47, 0, 28, 242, 1 },
+                            PasswordSalt = new byte[] { 233, 96, 197, 33, 182, 30, 71, 142, 224, 95, 197, 9, 206, 35, 147, 31, 219, 101, 144, 151, 167, 28, 92, 163, 1, 132, 228, 198, 160, 70, 242, 151, 198, 80, 143, 122, 66, 6, 0, 62, 171, 144, 126, 70, 234, 92, 140, 198, 192, 115, 218, 22, 128, 229, 166, 180, 124, 118, 103, 254, 62, 1, 61, 172, 33, 109, 1, 254, 91, 249, 186, 50, 252, 188, 231, 228, 206, 24, 97, 234, 167, 137, 123, 127, 188, 80, 89, 22, 184, 90, 203, 9, 87, 79, 141, 71, 75, 74, 98, 243, 119, 221, 7, 157, 11, 197, 108, 150, 171, 246, 117, 170, 75, 29, 5, 220, 134, 93, 87, 217, 98, 110, 245, 231, 151, 201, 157, 224 },
+                            Role = 2,
+                            UpdatedAt = new DateTime(2025, 3, 20, 23, 33, 47, 603, DateTimeKind.Local).AddTicks(5600),
+                            Username = "guest"
                         });
                 });
 
@@ -207,6 +210,9 @@ namespace CoffeeHub.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AuthId")
+                        .IsUnique();
+
                     b.ToTable("Customers");
 
                     b.HasData(
@@ -214,15 +220,15 @@ namespace CoffeeHub.Migrations
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000002"),
                             Address = "Ho Chi Minh City",
-                            AuthId = new Guid("00000000-0000-0000-0000-000000000000"),
-                            CreatedAt = new DateTime(2025, 3, 17, 12, 27, 40, 957, DateTimeKind.Local).AddTicks(1900),
+                            AuthId = new Guid("00000000-0000-0000-0000-000000000006"),
+                            CreatedAt = new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(4040),
                             CustomerLevel = 0,
                             DateOfBirth = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsAvailable = true,
                             Name = "Guest",
                             PhoneNumber = "0000000000",
                             Point = 0,
-                            UpdatedAt = new DateTime(2025, 3, 17, 12, 27, 40, 957, DateTimeKind.Local).AddTicks(1910)
+                            UpdatedAt = new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(4040)
                         });
                 });
 
@@ -323,6 +329,9 @@ namespace CoffeeHub.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AuthId")
+                        .IsUnique();
+
                     b.ToTable("Employees");
 
                     b.HasData(
@@ -330,15 +339,15 @@ namespace CoffeeHub.Migrations
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000001"),
                             Address = "Ho Chi Minh City",
-                            AuthId = new Guid("00000000-0000-0000-0000-000000000000"),
-                            CreatedAt = new DateTime(2025, 3, 17, 12, 27, 40, 944, DateTimeKind.Local).AddTicks(9490),
+                            AuthId = new Guid("00000000-0000-0000-0000-000000000005"),
+                            CreatedAt = new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(2600),
                             DateOfBirth = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateStartWork = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             MonthlySalary = 0m,
                             Name = "Online System",
                             PhoneNumber = "0000000000",
                             Role = 0,
-                            UpdatedAt = new DateTime(2025, 3, 17, 12, 27, 40, 956, DateTimeKind.Local).AddTicks(5060)
+                            UpdatedAt = new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(2610)
                         });
                 });
 
@@ -783,52 +792,251 @@ namespace CoffeeHub.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("74370603-af2f-4115-bc65-1dda7e1f74a2"),
-                            CreatedAt = new DateTime(2025, 3, 17, 12, 27, 40, 957, DateTimeKind.Local).AddTicks(5600),
+                            Id = new Guid("bc774cbb-a6a4-4612-b8c0-991b80d74f04"),
+                            CreatedAt = new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(6120),
                             EndTime = new TimeSpan(0, 12, 0, 0, 0),
                             Name = "Morning Shift",
                             StartTime = new TimeSpan(0, 6, 0, 0, 0),
-                            UpdatedAt = new DateTime(2025, 3, 17, 12, 27, 40, 957, DateTimeKind.Local).AddTicks(5610)
+                            UpdatedAt = new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(6120)
                         },
                         new
                         {
-                            Id = new Guid("a3197be9-7070-48b6-ad2f-271e10fadd8e"),
-                            CreatedAt = new DateTime(2025, 3, 17, 12, 27, 40, 957, DateTimeKind.Local).AddTicks(6020),
+                            Id = new Guid("203945cd-7d82-48d9-8e23-54f810d4709d"),
+                            CreatedAt = new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(6510),
                             EndTime = new TimeSpan(0, 18, 0, 0, 0),
                             Name = "Afternoon Shift",
                             StartTime = new TimeSpan(0, 12, 0, 0, 0),
-                            UpdatedAt = new DateTime(2025, 3, 17, 12, 27, 40, 957, DateTimeKind.Local).AddTicks(6030)
+                            UpdatedAt = new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(6510)
                         },
                         new
                         {
-                            Id = new Guid("c1a0c9f8-5bac-4fd2-ba0c-90f361998948"),
-                            CreatedAt = new DateTime(2025, 3, 17, 12, 27, 40, 957, DateTimeKind.Local).AddTicks(6040),
+                            Id = new Guid("d7d4295b-fdde-4b7e-8b61-98cde850c9e9"),
+                            CreatedAt = new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(6520),
                             EndTime = new TimeSpan(0, 22, 0, 0, 0),
                             Name = "Evening Shift",
                             StartTime = new TimeSpan(0, 18, 0, 0, 0),
-                            UpdatedAt = new DateTime(2025, 3, 17, 12, 27, 40, 957, DateTimeKind.Local).AddTicks(6040)
+                            UpdatedAt = new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(6520)
                         });
                 });
 
-            modelBuilder.Entity("CoffeeHub.Models.Domains.Auth", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
-                    b.HasOne("CoffeeHub.Models.Admin", "Admin")
-                        .WithOne("Auth")
-                        .HasForeignKey("CoffeeHub.Models.Domains.Auth", "AdminId");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasOne("CoffeeHub.Models.Domains.Customer", "Customer")
-                        .WithOne("Auth")
-                        .HasForeignKey("CoffeeHub.Models.Domains.Auth", "CustomerId");
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasOne("CoffeeHub.Models.Domains.Employee", "Employee")
-                        .WithOne("Auth")
-                        .HasForeignKey("CoffeeHub.Models.Domains.Auth", "EmployeeId");
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                    b.Navigation("Admin");
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                    b.Navigation("Customer");
+                    b.HasKey("Id");
 
-                    b.Navigation("Employee");
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.Admin", b =>
+                {
+                    b.HasOne("CoffeeHub.Models.Domains.Auth", "Auth")
+                        .WithOne("Admin")
+                        .HasForeignKey("CoffeeHub.Models.Admin", "AuthId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Auth");
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.Domains.Customer", b =>
+                {
+                    b.HasOne("CoffeeHub.Models.Domains.Auth", "Auth")
+                        .WithOne("Customer")
+                        .HasForeignKey("CoffeeHub.Models.Domains.Customer", "AuthId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Auth");
                 });
 
             modelBuilder.Entity("CoffeeHub.Models.Domains.Delivery", b =>
@@ -840,6 +1048,17 @@ namespace CoffeeHub.Migrations
                         .IsRequired();
 
                     b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.Domains.Employee", b =>
+                {
+                    b.HasOne("CoffeeHub.Models.Domains.Auth", "Auth")
+                        .WithOne("Employee")
+                        .HasForeignKey("CoffeeHub.Models.Domains.Employee", "AuthId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Auth");
                 });
 
             modelBuilder.Entity("CoffeeHub.Models.Domains.Ingredient", b =>
@@ -880,13 +1099,13 @@ namespace CoffeeHub.Migrations
                     b.HasOne("CoffeeHub.Models.Domains.Customer", "Customer")
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CoffeeHub.Models.Domains.Employee", "Employee")
                         .WithMany("Orders")
                         .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CoffeeHub.Models.Domains.Promotion", "Promotion")
@@ -957,25 +1176,76 @@ namespace CoffeeHub.Migrations
                     b.Navigation("Shift");
                 });
 
-            modelBuilder.Entity("CoffeeHub.Models.Admin", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.Navigation("Auth")
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CoffeeHub.Models.Domains.Auth", b =>
+                {
+                    b.Navigation("Admin")
+                        .IsRequired();
+
+                    b.Navigation("Customer")
+                        .IsRequired();
+
+                    b.Navigation("Employee")
                         .IsRequired();
                 });
 
             modelBuilder.Entity("CoffeeHub.Models.Domains.Customer", b =>
                 {
-                    b.Navigation("Auth")
-                        .IsRequired();
-
                     b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("CoffeeHub.Models.Domains.Employee", b =>
                 {
-                    b.Navigation("Auth")
-                        .IsRequired();
-
                     b.Navigation("Orders");
 
                     b.Navigation("Schedules");

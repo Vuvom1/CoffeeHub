@@ -19,6 +19,16 @@ public class MenuItemRepository : BaseRepository<MenuItem>, IMenuItemRepository
         return await _context.MenuItems.Include(x => x.MenuItemCategory).ToListAsync();
     }
 
+    public override async Task<MenuItem> GetByIdAsync(Guid id)
+    {
+        var menuItem = await _context.MenuItems.Include(x => x.MenuItemCategory).FirstOrDefaultAsync(x => x.Id == id);
+        if (menuItem == null)
+        {
+            throw new InvalidOperationException($"MenuItem with id {id} not found.");
+        }
+        return menuItem;
+    }
+
     public async Task<decimal> GetPriceByIdAsync(Guid id)
     {
         return await Task.FromResult(_context.MenuItems.FirstOrDefault(x => x.Id == id)?.Price ?? 0);

@@ -39,10 +39,12 @@ public class OrderConfig : IEntityTypeConfiguration<Order>
 
             builder.HasOne(d => d.Customer)
                 .WithMany(p => p.Orders)
-                .HasForeignKey(d => d.CustomerId);
+                .HasForeignKey(d => d.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(d => d.Employee)
                 .WithMany(p => p.Orders)
-                .HasForeignKey(d => d.EmployeeId);
+                .HasForeignKey(d => d.EmployeeId)
+                .OnDelete(DeleteBehavior.Restrict);
     }
 }

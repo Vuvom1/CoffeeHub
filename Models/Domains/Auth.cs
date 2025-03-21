@@ -12,10 +12,6 @@ public class Auth : BaseEntity
     public required string Email { get; set; }
     public bool? IsAvailable { get; set; }
     public UserRole? Role { get; set; }
-    
-    public Guid? AdminId { get; set; }
-    public Guid? EmployeeId { get; set; }
-    public Guid? CustomerId { get; set; }
     public virtual Admin Admin { get; set; } = null!;
     public virtual Employee Employee { get; set; } = null!;
     public virtual Customer Customer { get; set; } = null!;

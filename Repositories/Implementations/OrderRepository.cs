@@ -30,6 +30,27 @@ public class OrderRepository(CoffeeHubContext context) : BaseRepository<Order>(c
         return order;
     }
 
+    public Task<IEnumerable<Order>> GetOrdersByCustomerIdAsync(Guid customerId)
+    {
+        var orders = _context.Orders
+            .Where(o => o.CustomerId == customerId)
+            .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.MenuItem)
+            .Include(o => o.Delivery)
+            .ToList();
+
+        return Task.FromResult(orders.AsEnumerable());
+    }
+
+    public Task<IEnumerable<Order>> GetOrdersByStatusesAsync(IEnumerable<OrderStatus> orderStatuses)
+    {
+        var orders = _context.Orders
+            .Where(o => orderStatuses.Contains(o.Status))
+            .ToList();
+
+        return Task.FromResult(orders.AsEnumerable());
+    }
+
     public Task<decimal> GetTotalOderRevenueAsync(DateTime startDate, DateTime endDate)
     {
         var totalOrderRevenue = _context.Orders

@@ -17,6 +17,10 @@ using CoffeeHub.Services;
 using CoffeeHub.Models.Domains;
 using CoffeeHub.Middleware;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.AspNetCore.Identity;
+using CoffeeHub.Enums;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -112,6 +116,7 @@ if (string.IsNullOrEmpty(jwtKey))
     throw new InvalidOperationException("JWT key is not configured.");
 }
 var key = Encoding.ASCII.GetBytes(jwtKey);
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -131,6 +136,13 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(key)
     };
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CashierOnly", policy => policy.RequireClaim("position", "Cashier"));
+    options.AddPolicy("BaristaOnly", policy => policy.RequireClaim("position", "Barista"));
+    options.AddPolicy("WaiterOnly", policy => policy.RequireClaim("position", "Waiter"));
 });
 
 // Initialize Firebase Admin SDK if not already initialized
@@ -155,6 +167,7 @@ if (app.Environment.IsDevelopment())
         options.DocumentPath = "/openapi/v1.json";
     });
 }
+
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseCors("AllowAll");

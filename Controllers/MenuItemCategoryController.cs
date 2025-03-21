@@ -2,6 +2,7 @@ using AutoMapper;
 using CoffeeHub.Models.Domains;
 using CoffeeHub.Models.DTOs.MenuItemCategoryDtos;
 using CoffeeHub.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,6 +23,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet]
+        [Authorize (Roles = "Admin, Employee, Customer")]
         public async Task<IActionResult> GetAll()
         {
             var menuItemCategories = await _menuItemCategoryService.GetAllAsync();
@@ -29,6 +31,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet("getWithMenuItems")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllWithMenuItems()
         {
             var menuItemCategories = await _menuItemCategoryService.GetAllWithMenuItemsAsync();
@@ -36,6 +39,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin, Employee, Customer")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var menuItemCategory = await _menuItemCategoryService.GetByIdAsync(id);
@@ -47,6 +51,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(MenuItemCategoryAddDto menuItemCategory)
         {
             var menuItemCategoryDomain = _mapper.Map<MenuItemCategory>(menuItemCategory);
@@ -55,6 +60,7 @@ namespace CoffeeHub.Controllers
         }
         
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(Guid id, MenuItemCategoryDto menuItemCategory)
         {
             var existingMenuItemCategory = await _menuItemCategoryService.GetByIdAsync(id);

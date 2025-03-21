@@ -1,4 +1,5 @@
 using System;
+using CoffeeHub.Enums;
 using CoffeeHub.Models;
 using CoffeeHub.Models.Domains;
 using CoffeeHub.Repositories.Interfaces;
@@ -39,5 +40,15 @@ public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
         }
         
         return employee;
+    }
+
+    public async Task UpdateRoleAsync(Guid id, EmployeeRole role)
+    {
+        var employee = await _context.Employees.FirstOrDefaultAsync(x => x.Id == id);
+        if (employee != null)
+        {
+            employee.Role = role;
+            await _context.SaveChangesAsync();
+        }
     }
 }

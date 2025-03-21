@@ -1,5 +1,6 @@
 using System;
 using CoffeeHub.Enums;
+using CoffeeHub.Models;
 using CoffeeHub.Models.Domains;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -36,5 +37,17 @@ public class AuthConfig : IEntityTypeConfiguration<Auth>
             .IsRequired()
             .HasMaxLength(50)
             .HasAnnotation("RegularExpression", @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+
+        builder.HasOne(x => x.Customer)
+            .WithOne(x => x.Auth)
+            .HasForeignKey<Customer>(x => x.AuthId);
+
+        builder.HasOne(x => x.Admin)
+            .WithOne(x => x.Auth)
+            .HasForeignKey<Admin>(x => x.AuthId);
+        
+        builder.HasOne(x => x.Employee)
+            .WithOne(x => x.Auth)
+            .HasForeignKey<Employee>(x => x.AuthId);
     }
 }

@@ -3,6 +3,7 @@ using CoffeeHub.Models.DTOs.IngredientDtos;
 using CoffeeHub.Models.DTOs.ShiftDtos;
 using CoffeeHub.Models.DTOs.StatisticDtos;
 using CoffeeHub.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,6 +23,7 @@ namespace CoffeeHub.Controllers
 
         // GET: api/Statistic/TotalOrderRevenue
         [HttpGet("Finance")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetTotalOrderRevenue([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
         {
 
@@ -41,6 +43,7 @@ namespace CoffeeHub.Controllers
 
         // GET: api/Statistic/TotalScheduleTime
         [HttpGet("Schedule")]
+         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetTotalScheduleTime([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
         {
             var totalSchedulesTimeByShifts = await _statisticService.GetTotalSchedulesTimeByShiftsAsync(startDate, endDate);
@@ -56,6 +59,7 @@ namespace CoffeeHub.Controllers
 
         // GET: api/Statistic/HighestLowestStock
         [HttpGet("Stock")]
+         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetHighestLowestStock([FromQuery] int limit)
         {
             var ingredientsWithLowStock = await _statisticService.GetIngredientsWithLowStockAsync(limit);
@@ -72,6 +76,7 @@ namespace CoffeeHub.Controllers
 
         // GET: api/Statistic/DailyFinancial
         [HttpGet("DailyFinancial")]
+         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetDailyFinancial([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
         {
             var financialStatisticByDays = await _statisticService.GetFinancialStatisticByDaysAsync(startDate, endDate);
@@ -81,6 +86,7 @@ namespace CoffeeHub.Controllers
 
         // GET: api/Statistic/MonthlyFinancial
         [HttpGet("MonthlyFinancial")]
+         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetMonthlyFinancial([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
         {
             var financialStatisticByMonths = await _statisticService.GetFinancialStatisticByMonthsAsync(startDate, endDate);
@@ -90,6 +96,7 @@ namespace CoffeeHub.Controllers
 
         // GET: api/Statistic/YearlyFinancial
         [HttpGet("YearlyFinancial")]
+         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetYearlyFinancial([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
         {
             var financialStatisticByYears = await _statisticService.GetFinancialStatisticByYearsAsync(startDate, endDate);
@@ -99,6 +106,7 @@ namespace CoffeeHub.Controllers
 
         // GET: api/Statistic/PopularMenuItems
         [HttpGet("PopularMenuItems")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetPopularMenuItems([FromQuery] DateTime startDate, [FromQuery] DateTime endDate, [FromQuery] int limit)
         {
             var popularMenuItems = await _statisticService.GetPopularMenuItemsByTimeAsync(startDate, endDate, limit);
@@ -108,6 +116,7 @@ namespace CoffeeHub.Controllers
 
         // GET: api/Statistic/LeastPopularMenuItems
         [HttpGet("LeastPopularMenuItems")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetLeastPopularMenuItems([FromQuery] DateTime startDate, [FromQuery] DateTime endDate, [FromQuery] int limit)
         {
             var leastPopularMenuItems = await _statisticService.GetLeastPopularMenuItemsByTimeAsync(startDate, endDate, limit);

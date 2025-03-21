@@ -11,5 +11,4 @@ public class CustomerAddDto
     public required string Address { get; set; }
     public bool? IsAvailable { get; set; } = true;
     public int? Point { get; set; } = 0;
-    public Guid AuthId { get; set; }
 }

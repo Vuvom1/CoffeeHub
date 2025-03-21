@@ -2,6 +2,7 @@ using AutoMapper;
 using CoffeeHub.Models.Domains;
 using CoffeeHub.Models.DTOs.PromtionDtos;
 using CoffeeHub.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,6 +40,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet("usable/{id}")]
+        [Authorize]
         public async Task<IActionResult> GetUsablePromotionsByCustomerId(Guid id)
         {
             var promotions = await _promotionService.GetUsablePromotionsByCustomerIdAsync(id);
@@ -48,6 +50,7 @@ namespace CoffeeHub.Controllers
         
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetById(Guid id)
         {
             var promotion = await _promotionService.GetByIdAsync(id);
@@ -59,6 +62,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
             var promotions = await _promotionService.GetAllAsync();
@@ -67,6 +71,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(PromotionAddDto promotionDto)
         {
             var promotion = _mapper.Map<Promotion>(promotionDto);
@@ -75,6 +80,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(Guid id, PromotionEditDto promotionDto)
         {
             var promotion = _mapper.Map<Promotion>(promotionDto);
@@ -84,6 +90,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPut("activation/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdatePromotionActivation(Guid id, [FromBody] bool isActive)
         {
             await _promotionService.UpdateActivationAsync(id, isActive);

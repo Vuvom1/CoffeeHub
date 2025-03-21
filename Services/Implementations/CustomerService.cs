@@ -26,7 +26,6 @@ public class CustomerService : BaseService<Customer>, ICustomerService
             throw new Exception("Auth not found");
         }
 
-        auth.CustomerId = addedCustomer.Id;
         await _authRepository.UpdateAsync(auth);
 
         return addedCustomer;

@@ -7,6 +7,7 @@ namespace CoffeeHub.Services.Interfaces;
 public interface IAuthService : IBaseService<Auth>
 {
     Task<Auth> Register(Auth auth, string password);
+    Task<Auth> RegisterCustomer(Auth auth, Customer customer, string password);
     Task<Auth> RegisterWithRandomPassword(Auth auth);
     Task<Auth> RegisterEmployeeWithRandomPassword(Auth auth);   
     Task<Auth> Login(string username, string password);

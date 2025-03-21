@@ -14,13 +14,15 @@ public class AuthService : BaseService<Auth>, IAuthService
 {
     private readonly IAuthRepository _authRepository;
     private readonly IEmployeeService _employeeService;
+    private readonly ICustomerService _customerService;
     private readonly IConfiguration _configuration;
     private readonly IEmailService _emailService;
 
-    public AuthService(IAuthRepository authRepository, IEmployeeService employeeService, IConfiguration configuration, IEmailService emailService) : base(authRepository)
+    public AuthService(IAuthRepository authRepository, IEmployeeService employeeService, ICustomerService customerService, IConfiguration configuration, IEmailService emailService) : base(authRepository)
     {
         _authRepository = authRepository;
         _employeeService = employeeService;
+        _customerService = customerService;
         _configuration = configuration;
         _emailService = emailService;
     }
@@ -40,6 +42,19 @@ public class AuthService : BaseService<Auth>, IAuthService
         auth.Role = UserRole.Customer;
 
         return await _authRepository.Register(auth, password);
+    }
+
+    public async Task<Auth> RegisterCustomer(Auth auth, Customer customer, string password)
+    {
+        auth.Role = UserRole.Customer;
+    
+        var createdAuth = Register(auth, password).Result;
+        
+        customer.AuthId = createdAuth.Id;
+
+        await _customerService.AddAsync(customer);
+        
+        return createdAuth;
     }
 
     public async Task<Auth> RegisterWithRandomPassword(Auth auth)
@@ -89,6 +104,17 @@ public class AuthService : BaseService<Auth>, IAuthService
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var jwtKey = _configuration["Jwt:Key"];
+        var jwtIssuer = _configuration["Jwt:Issuer"];
+        var jwtAudience = _configuration["Jwt:Audience"];
+        
+        if (string.IsNullOrEmpty(jwtIssuer))
+        {
+            throw new ArgumentNullException("Jwt:Issuer", "JWT issuer is not configured.");
+        }
+        if (string.IsNullOrEmpty(jwtAudience))
+        {
+            throw new ArgumentNullException("Jwt:Audience", "JWT audience is not configured.");
+        }
 
         if (string.IsNullOrEmpty(jwtKey))
         {
@@ -103,14 +129,14 @@ public class AuthService : BaseService<Auth>, IAuthService
             new Claim(ClaimTypes.Role, user.Role?.ToString() ?? throw new ArgumentNullException(nameof(user.Role))),
         };
 
-        if (user.Role == UserRole.Employee)
+        if (user.Role == UserRole.Employee && user.Employee != null)
         {
             claims.Add(new Claim("id", user.Employee.Id.ToString()));
             claims.Add(new Claim("name", user.Employee.Name));
             claims.Add(new Claim("position", user.Employee.Role.ToString()));
             claims.Add(new Claim("address", user.Employee.Address.ToString()));
             claims.Add(new Claim("phoneNumber", user.Employee.PhoneNumber.ToString()));
-        } else if (user.Role == UserRole.Customer)
+        } else if (user.Role == UserRole.Customer && user.Customer != null)
         {
             claims.Add(new Claim("id", user.Customer.Id.ToString()));
             claims.Add(new Claim("name", user.Customer.Name ?? throw new ArgumentNullException(nameof(user.Customer.Name))));
@@ -125,6 +151,8 @@ public class AuthService : BaseService<Auth>, IAuthService
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
+            Audience = jwtAudience,
+            Issuer = jwtIssuer,
             Expires = DateTime.UtcNow.AddDays(7),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
@@ -145,6 +173,4 @@ public class AuthService : BaseService<Auth>, IAuthService
         }
         return res.ToString();
     }
-
-    
 }

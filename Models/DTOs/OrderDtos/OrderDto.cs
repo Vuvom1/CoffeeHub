@@ -23,4 +23,5 @@ public class OrderDto
     public virtual Employee Employee { get; set; } = null!;
     public virtual ICollection<OrderDetailDto> OrderDetails { get; set; } = new HashSet<OrderDetailDto>();
     public virtual Promotion? Promotion { get; set; } = null!;
+    public virtual Delivery? Delivery { get; set; }
 }

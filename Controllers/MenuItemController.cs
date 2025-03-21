@@ -13,6 +13,7 @@ using FirebaseAdmin.Auth;
 using CoffeeHub.Models.DTOs.MenuItemDtos;
 using CoffeeHub.Models.Domains;
 using CoffeeHub.Models.DTOs.RecipeDtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CoffeeHub.Controllers
 {
@@ -30,17 +31,17 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var menuItem = await _menuItemService.GetByIdAsync(id);
-            if (menuItem == null)
-            {
-                return NotFound();
-            }
-            return Ok(menuItem);
+            var menuItem = await _menuItemService.GetByIdAsync(id); 
+            var menuItemDto = _mapper.Map<MenuItemDto>(menuItem);
+            
+            return Ok(menuItemDto);
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAll()
         {
             var menuItems = await _menuItemService.GetAllAsync();
@@ -50,6 +51,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet("getPopular")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetPopular([FromQuery] int limit = 5)
         {
             var menuItems = await _menuItemService.GetPopularMenuItemsAsync(limit);
@@ -59,6 +61,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpGet("getNewest")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetNewest([FromQuery] int limit = 5)
         {
             var menuItems = await _menuItemService.GetNewestMenuItemsAsync(limit);
@@ -68,6 +71,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromBody] MenuItemAddDto menuItemDto)
         {
             var menuItem = _mapper.Map<MenuItem>(menuItemDto);
@@ -76,6 +80,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(Guid id, MenuItemEditDto menuItemEditDto)
         {
             var menuItem = _mapper.Map<MenuItem>(menuItemEditDto);
@@ -85,6 +90,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var menuItem = await _menuItemService.GetByIdAsync(id);
@@ -97,6 +103,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPut("updateAvailability")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateAvailability(Guid id)
         {
             var menuItem = await _menuItemService.UpdateMenuItemAvailabilityAsync(id);
