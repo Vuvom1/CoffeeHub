@@ -6,5 +6,5 @@ namespace CoffeeHub.Repositories.Interfaces;
 
 public interface IScheduleRepository : IBaseRepository<Schedule>
 {
-    Task<decimal> GetTotalSchedulesTimeByShiftAsync( Guid shiftId, DateTime startDate, DateTime endDate); 
+    Task<Dictionary<Shift, decimal>> GetTotalSchedulesTimeByShiftsAsync(DateTime startDate, DateTime endDate);
 }

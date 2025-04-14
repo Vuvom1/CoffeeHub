@@ -6,4 +6,5 @@ namespace CoffeeHub.Services.Interfaces;
 public interface IMenuItemCategoryService : IBaseService<MenuItemCategory>
 {
     Task<IEnumerable<MenuItemCategory>> GetAllWithMenuItemsAsync();
+    Task<MenuItemCategory> GetByNameWithMenuItemsAsync(string name);
 }

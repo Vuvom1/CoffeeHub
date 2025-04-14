@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CoffeeHub.Enums;
 using CoffeeHub.Models;
 using CoffeeHub.Models.Domains;
+using CoffeeHub.Repositories;
 using CoffeeHub.Repositories.Interfaces;
 using CoffeeHub.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,7 @@ namespace CoffeeHub.Services.Implementations
         private readonly IIngredientRepository _ingredientRepository;
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IRecipeRepository _recipeRepository;
+        private readonly IAuthRepository _userRepository;
         private readonly IDbContextFactory<CoffeeHubContext> _dbContextFactory;
 
         public OrderService(
@@ -27,10 +29,11 @@ namespace CoffeeHub.Services.Implementations
             IOrderDetailRepository orderDetailRepository,
             IPromotionRepository promotionRepository,
             IMenuItemRepository menuItemRepository,
-            ICustomerRepository customerRepository, 
+            ICustomerRepository customerRepository,
             IEmployeeRepository employeeRepository,
             IIngredientRepository ingredientRepository,
             IRecipeRepository recipeRepository,
+            IAuthRepository userRepository,
             IDbContextFactory<CoffeeHubContext> dbContextFactory) : base(orderRepository)
         {
             _orderRepository = orderRepository;
@@ -42,24 +45,26 @@ namespace CoffeeHub.Services.Implementations
             _employeeRepository = employeeRepository;
             _ingredientRepository = ingredientRepository;
             _recipeRepository = recipeRepository;
+            _userRepository = userRepository;
             _dbContextFactory = dbContextFactory;
         }
 
-        
+
 
         public override async Task AddAsync(Order order)
         {
             var totalPrice = 0m;
             var totalQuantity = 0;
             var discountAmount = 0m;
-            var customerLevel = Enums.CustomerLevel.Silver;
+            var customerLevel = CustomerLevel.Silver;
 
             //Check employee is available
             var employee = await _employeeRepository.GetByIdAsync(order.EmployeeId);
-            if (employee == null) {
+            if (employee == null)
+            {
                 order.EmployeeId = new Guid("00000000-0000-0000-0000-000000000001");
             }
-            
+
             foreach (var orderDetail in order.OrderDetails)
             {
                 var menuItem = _menuItemRepository.GetByIdAsync(orderDetail.MenuItemId);
@@ -69,36 +74,6 @@ namespace CoffeeHub.Services.Implementations
                 if (menuItem.Result.IsAvailable == false)
                 {
                     throw new InvalidOperationException($"Menu item with name {menuItem.Result.Name} is not available.");
-                }
-
-                // Check if the ingredient is enough
-                var recipes = await _recipeRepository.GetByMenuItemIdAsync(orderDetail.MenuItemId);
-                var ingredientQuantities = new Dictionary<Guid, int>();
-                foreach (var recipe in recipes)
-                {
-                    ingredientQuantities.Add(recipe.IngredientId, (int)recipe.Quantity * orderDetail.Quantity);
-                }
-
-                var isEnough = await _ingredientRepository.IsEnoughAsync(ingredientQuantities);
-                if (!isEnough)
-                {
-                    throw new InvalidOperationException($"Ingredient is not enough for menu item with name {menuItem.Result.Name}.");
-                }
-
-                // Update ingredient stock
-                using var context = _dbContextFactory.CreateDbContext();
-                foreach (var ingredientQuantity in ingredientQuantities)
-                {
-                    var ingredient = await context.Ingredients.FindAsync(ingredientQuantity.Key);
-                    if (ingredient != null)
-                    {
-                        ingredient.TotalQuantity -= ingredientQuantity.Value;
-                        await context.SaveChangesAsync();
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException($"Ingredient with id {ingredientQuantity.Key} not found.");
-                    }
                 }
 
                 totalPrice += price;
@@ -111,7 +86,9 @@ namespace CoffeeHub.Services.Implementations
             if (order.CustomerId == null)
             {
                 order.CustomerId = new Guid("00000000-0000-0000-0000-000000000002");
-            } else {
+            }
+            else
+            {
                 var customer = await _customerRepository.GetByIdAsync(order.CustomerId.Value);
                 var point = (int)Math.Floor(totalPrice / 1000);
                 if (!customer.IsAvailable)
@@ -119,7 +96,7 @@ namespace CoffeeHub.Services.Implementations
                     throw new InvalidOperationException($"Customer with id {order.CustomerId} is not available.");
                 }
                 else
-                {   
+                {
                     customerLevel = customer.CustomerLevel;
                     customer.Point += point;
                     await _customerRepository.UpdateAsync(customer);
@@ -137,7 +114,7 @@ namespace CoffeeHub.Services.Implementations
                     await _promotionRepository.IncreaseUsageCountAsync(PromotionId.Value);
                 }
             }
-
+            
             order.TotalAmount = totalPrice;
             order.TotalQuantity = totalQuantity;
             order.DiscountAmount = discountAmount;
@@ -146,14 +123,43 @@ namespace CoffeeHub.Services.Implementations
             await _orderRepository.AddAsync(order);
         }
 
-        public async Task CancelOrderAsync(Guid orderId)
+        public async Task<IEnumerable<Order>> GetAllViewableByUserId(Guid id)
         {
-            await _orderRepository.UpdateOrderStatusAsync(orderId, OrderStatus.Cancelled);
-        }
+            var user = _userRepository.GetByIdAsync(id);
 
-        public async Task CompleteOrderAsync(Guid orderId)
-        {
-            await _orderRepository.UpdateOrderStatusAsync(orderId, OrderStatus.Completed);
+            if (user.Result.Role == UserRole.Admin)
+            {
+                return await _orderRepository.GetAllAsync();
+            }
+            else if (user.Result.Role == UserRole.Employee)
+            {
+                if (user.Result.Employee.Role == EmployeeRole.Barista)
+                {
+                    return await _orderRepository.GetOrdersByStatusesAsync(new List<OrderStatus>
+                    {
+                        OrderStatus.Pending,
+                        OrderStatus.Processing
+                    });
+                }
+                else if (user.Result.Employee.Role == EmployeeRole.Cashier)
+                {
+                    return await _orderRepository.GetOrdersByStatusesAsync(new List<OrderStatus>
+                    {
+                        OrderStatus.Pending,
+                        OrderStatus.Processing,
+                    });
+                }
+                else if (user.Result.Employee.Role == EmployeeRole.Waiter)
+                {
+                    return await _orderRepository.GetOrdersByStatusesAsync(new List<OrderStatus>
+                    {
+                        OrderStatus.ReadyForPickup,
+                        OrderStatus.Completed,
+                    });
+                }
+            }
+
+            return await _orderRepository.GetOrdersByCustomerIdAsync(user.Result.Customer.Id);
         }
 
         public Task<IEnumerable<Order>> GetOrdersByCustomerIdAsync(Guid customerId)
@@ -161,53 +167,66 @@ namespace CoffeeHub.Services.Implementations
             return _orderRepository.GetOrdersByCustomerIdAsync(customerId);
         }
 
-        public Task<IEnumerable<Order>> GetPendingOrProcessingOrdersAsync()
-        {
-            var orderStatuses = new List<OrderStatus>
-            {
-                OrderStatus.Pending,
-                OrderStatus.Processing
-            };
-            return _orderRepository.GetOrdersByStatusesAsync(orderStatuses);
-        }
-
-
-        public Task<IEnumerable<Order>> GetProcessingOrPreparingOrdersAsync()
-        {
-            var orderStatuses = new List<OrderStatus>
-            {
-                OrderStatus.Processing,
-                OrderStatus.Preparing
-            };
-            return _orderRepository.GetOrdersByStatusesAsync(orderStatuses);
-        }
-
-        public Task<IEnumerable<Order>> GetReadyOrdersAsync()
-        {
-            var orderStatuses = new List<OrderStatus>
-            {
-                OrderStatus.ReadyForPickup
-            };
-            return _orderRepository.GetOrdersByStatusesAsync(orderStatuses);
-        }
-
-        public async Task MarkOrderAsReadyAsync(Guid orderId)
-        {
-            await _orderRepository.UpdateOrderStatusAsync(orderId, OrderStatus.ReadyForPickup);
-        }
-
-        public async Task StartPreparingOrderAsync(Guid orderId)
-        {
-            await _orderRepository.UpdateOrderStatusAsync(orderId, OrderStatus.Preparing);
-        }
-
-        public Task StartProcessingOrderAsync(Guid orderId)
-        {
-            return _orderRepository.UpdateOrderStatusAsync(orderId, OrderStatus.Processing);
-        }
-
         public async Task UpadateOrderStatusAsync(Guid orderId, OrderStatus orderStatus)
         {
+            var order = await _orderRepository.GetByIdAsync(orderId);
+            if (order == null)
+            {
+                throw new InvalidOperationException($"Order with id {orderId} not found.");
+            }
+
+            if (order.Status == OrderStatus.Preparing && orderStatus == OrderStatus.Cancelled)
+            {
+                foreach (var orderDetail in order.OrderDetails)
+                {
+                    var menuItem = await _menuItemRepository.GetByIdAsync(orderDetail.MenuItemId);
+
+                    foreach (var recipe in await _recipeRepository.GetByMenuItemIdAsync(orderDetail.MenuItemId))
+                    {
+                        var ingredient = await _ingredientRepository.GetByIdAsync(recipe.IngredientId);
+                        if (ingredient != null)
+                        {
+                            ingredient.TotalQuantity += (int)recipe.Quantity * orderDetail.Quantity;
+                            await _ingredientRepository.UpdateAsync(ingredient);
+                        }
+                    }
+                }
+            }
+
+            if (orderStatus == OrderStatus.Preparing)
+            {
+
+                foreach (var orderDetail in order.OrderDetails)
+                {
+                    var recipes = await _recipeRepository.GetByMenuItemIdAsync(orderDetail.MenuItemId);
+                    var ingredientQuantities = new Dictionary<Guid, int>();
+
+                    foreach (var recipe in recipes)
+                    {
+                        ingredientQuantities.Add(recipe.IngredientId, (int)recipe.Quantity * orderDetail.Quantity);
+                    }
+
+                    var isEnough = await _ingredientRepository.IsEnoughAsync(ingredientQuantities);
+
+                    var menuItem = await _menuItemRepository.GetByIdAsync(orderDetail.MenuItemId);
+
+                    if (!isEnough)
+                    {
+                        throw new InvalidOperationException($"Ingredient is not enough for menu item with name {menuItem.Name}.");
+                    }
+
+                    foreach (var recipe in await _recipeRepository.GetByMenuItemIdAsync(orderDetail.MenuItemId))
+                    {
+                        var ingredient = await _ingredientRepository.GetByIdAsync(recipe.IngredientId);
+                        if (ingredient != null)
+                        {
+                            ingredient.TotalQuantity -= (int)recipe.Quantity * orderDetail.Quantity;
+                            await _ingredientRepository.UpdateAsync(ingredient);
+                        }
+                    }
+                }
+            }
+
             await _orderRepository.UpdateOrderStatusAsync(orderId, orderStatus);
         }
     }

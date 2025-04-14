@@ -1,0 +1,108 @@
+{
+    "function_declarations": [
+        {
+            "name": "GetPopularMenuItems",
+            "description": "Retrieve a list of popular menu items.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "topCount": {
+                        "type": "integer",
+                        "description": "The maximum number of items to return."
+                    }
+                },
+                "required": [
+                    "topCount"
+                ]
+            }
+        },
+        {
+            "name": "GetMenuItemDetails",
+            "description": "Fetch detailed information about a specific menu item.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "The name of the menu item."
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            }
+        },
+        {
+            "name": "GetNewestMenuItems",
+            "description": "Retrieve a list of newest menu items.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "topCount": {
+                        "type": "integer",
+                        "description": "The maximum number of items to return."
+                    }
+                },
+                "required": [
+                    "topCount"
+                ]
+            }
+        },
+        {
+            "name": "SuggestMenuItemsWithPreferences",
+            "description": "Suggest menu items based on user preferences",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "preferences": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "User preferences for menu items."
+                    }
+                },
+                "required": [
+                    "preferences"
+                ]
+            }
+        },
+        {
+            "name": "RecommendBudgetFriendlyMenuItems",
+            "description": "Recommend budget-friendly menu items.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "budget": {
+                        "type": "number",
+                        "description": "The maximum budget for menu items."
+                    }
+                },
+                "required": [
+                    "budget"
+                ]
+            }
+        },
+        {
+            "name": "RetrieveMenuItemsByCategory",
+            "description": "Retrieve a list of menu items by category.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "category": {
+                        "type": "string",
+                        "description": "The category of menu items to retrieve."
+                    },
+                    "topCount": {
+                        "type": "integer",
+                        "description": "The maximum number of items to return."
+                    }
+                },
+                "required": [
+                    "category",
+                    "topCount"
+                ]
+            }
+        }
+    ]
+}

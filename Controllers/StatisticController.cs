@@ -43,7 +43,7 @@ namespace CoffeeHub.Controllers
 
         // GET: api/Statistic/TotalScheduleTime
         [HttpGet("Schedule")]
-         [Authorize(Roles = "Admin")]
+        //  [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetTotalScheduleTime([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
         {
             var totalSchedulesTimeByShifts = await _statisticService.GetTotalSchedulesTimeByShiftsAsync(startDate, endDate);

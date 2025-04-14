@@ -7,6 +7,7 @@ public class EmployeeScheduleDto
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = null!;
+    public string ImageUrl { get; set; } = null!;
     public DateTime DateOfBirth { get; set; }
     public string PhoneNumber { get; set; } = null!;
     public decimal MonthlySalary { get; set; }

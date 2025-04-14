@@ -58,17 +58,9 @@ public class StatisticService : IStatisticService
         return Task.FromResult(totalNetProfit);        
     }
 
-    Task<Dictionary<Shift, decimal>> IStatisticService.GetTotalSchedulesTimeByShiftsAsync(DateTime startDate, DateTime endDate)
+    public Task<Dictionary<Shift, decimal>> GetTotalSchedulesTimeByShiftsAsync(DateTime startDate, DateTime endDate)
     {
-        var shifts = _shiftRepository.GetAllAsync().Result;
-        var totalSchedulesTimeByShifts = new Dictionary<Shift, decimal>();
-        foreach (var shift in shifts)
-        {
-            var totalSchedulesTime = _scheduleRepository.GetTotalSchedulesTimeByShiftAsync(shift.Id, startDate, endDate).Result;
-            totalSchedulesTimeByShifts.Add(shift, totalSchedulesTime);
-        }
-
-        return Task.FromResult(totalSchedulesTimeByShifts);
+        return _shiftRepository.GetTotalSchedulesTimeByShiftsAsync(startDate, endDate);
     }
 
     public Task<IEnumerable<Ingredient>> GetIngredientsWithLowStockAsync(int limit)

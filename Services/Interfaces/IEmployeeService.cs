@@ -10,4 +10,5 @@ public interface IEmployeeService : IBaseService<Employee>
     public Task<Employee> AddAndReturnAsync(Employee employee);
     public  Task<Employee> AddWithAuthAsync(Employee employee, Guid authId);
     public Task UpdateRoleAsync(Guid id, EmployeeRole role);  
+    public Task UpdateBasicInforAsync(Guid id, Employee employee);    
 }

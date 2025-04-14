@@ -34,41 +34,11 @@ namespace CoffeeHub.Controllers
             return Ok(orderDtos);
         }
 
-        [HttpGet("pendingOrProcessing")]
-        [Authorize(Policy = "CashierOnly")]
-        public async Task<IActionResult> GetPendingOrders()
-        {
-            var orders = await _orderService.GetPendingOrProcessingOrdersAsync();
-            var orderDtos = _mapper.Map<IEnumerable<OrderDto>>(orders);
-
-            return Ok(orderDtos);
-        }
-
-        [HttpGet("processingOrPreparing")]
-        [Authorize(Policy = "BaristaOnly")]
-        public async Task<IActionResult> GetProcessingOrPreparingOrders()
-        {
-            var orders = await _orderService.GetProcessingOrPreparingOrdersAsync();
-            var orderDtos = _mapper.Map<IEnumerable<OrderDto>>(orders);
-
-            return Ok(orderDtos);
-        }
-
-        [HttpGet("ready")]
-        [Authorize(Policy = "WaiterOnly")]
-        public async Task<IActionResult> GetReadyOrders()
-        {
-            var orders = await _orderService.GetReadyOrdersAsync();
-            var orderDtos = _mapper.Map<IEnumerable<OrderDto>>(orders);
-
-            return Ok(orderDtos);
-        }
-
-        [HttpGet("getByCustomerId/{id}")]
+        [HttpGet("viewable-by-user-id")]
         [Authorize(Roles = "Admin, Employee, Customer")]
-        public async Task<IActionResult> GetByCustomerId(Guid id)
+        public async Task<IActionResult> GetAllViewableByUserId([FromQuery]Guid id)
         {
-            var orders = await _orderService.GetOrdersByCustomerIdAsync(id);
+            var orders = await _orderService.GetAllViewableByUserId(id);
             var orderDtos = _mapper.Map<IEnumerable<OrderDto>>(orders);
 
             return Ok(orderDtos);
@@ -103,42 +73,6 @@ namespace CoffeeHub.Controllers
         {
             await _orderService.UpadateOrderStatusAsync(id, orderStatus);
             return Ok("Order status updated successfully.");
-        }
-
-        [HttpPut("{id}/cancel")]
-        [Authorize(Roles = "Admin, Employee, Customer")]
-        public async Task<IActionResult> CancelOrder(Guid id)
-        {
-            await _orderService.CancelOrderAsync(id);
-            return Ok();
-        }
-
-        [HttpPut("{id}/start-processing")]
-        public async Task<IActionResult> StartProcessingOrder(Guid id)
-        {
-            await _orderService.StartProcessingOrderAsync(id);
-            return Ok();
-        }
-
-        [HttpPut("{id}/start-preparing")]
-        public async Task<IActionResult> StartPreparingOrder(Guid id)
-        {
-            await _orderService.StartPreparingOrderAsync(id);
-            return Ok();
-        }
-
-        [HttpPut("{id}/mark-ready")]
-        public async Task<IActionResult> MarkOrderAsReady(Guid id)
-        {
-            await _orderService.MarkOrderAsReadyAsync(id);
-            return Ok();
-        }
-
-        [HttpPut("{id}/complete")]
-        public async Task<IActionResult> CompleteOrder(Guid id)
-        {
-            await _orderService.CompleteOrderAsync(id);
-            return Ok();
         }
     }
 }

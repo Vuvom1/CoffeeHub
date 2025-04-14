@@ -47,4 +47,8 @@ public class MenuItemService : BaseService<MenuItem>, IMenuItemService
         return await _menuItemRepository.GetNewestMenuItemsAsync(limit);
     }
 
+    public async Task<MenuItem?> GetByNameAsync(string name)
+    {
+        return await _menuItemRepository.GetByNameAsync(name);
+    }
 }

@@ -8,6 +8,7 @@ namespace CoffeeHub.Models.Domains
     public class Employee : BaseEntity
 {
     public required string Name { get; set; }
+    public string? ImageUrl { get; set; }
     public required DateTime DateOfBirth { get; set; }
     public required string PhoneNumber { get; set; }
     public decimal MonthlySalary { get; set; }

@@ -6,4 +6,5 @@ namespace CoffeeHub.Repositories.Interfaces;
 
 public interface IAdminRepository : IBaseRepository<Admin>
 {
+    public Task<Admin> GetWithAuthAsync(Guid id);
 }

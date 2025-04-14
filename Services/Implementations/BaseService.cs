@@ -15,12 +15,12 @@ public class BaseService<T> : IBaseService<T> where T : BaseEntity
     {
         _repository = repository;
     }
-    public async Task<T> GetByIdAsync(Guid id)
+    public virtual async Task<T> GetByIdAsync(Guid id)
     {
         return await _repository.GetByIdAsync(id);
     }
 
-    public async Task<IEnumerable<T>> GetAllAsync()
+    public virtual async Task<IEnumerable<T>> GetAllAsync()
     {
         return await _repository.GetAllAsync();
     }
@@ -35,7 +35,7 @@ public class BaseService<T> : IBaseService<T> where T : BaseEntity
         await _repository.AddAsync(entity);
     }
 
-    public async Task UpdateAsync(T entity)
+    public virtual async Task UpdateAsync(T entity)
     {
         await _repository.UpdateAsync(entity);
     }

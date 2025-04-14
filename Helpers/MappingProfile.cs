@@ -1,6 +1,8 @@
 using System;
 using AutoMapper;
+using CoffeeHub.Models;
 using CoffeeHub.Models.Domains;
+using CoffeeHub.Models.DTOs.AdminDtos;
 using CoffeeHub.Models.DTOs.AuthDtos;
 using CoffeeHub.Models.DTOs.CustomerDtos;
 using CoffeeHub.Models.DTOs.DeliveryDtos;
@@ -17,7 +19,6 @@ using CoffeeHub.Models.DTOs.PromtionDtos;
 using CoffeeHub.Models.DTOs.RecipeDtos;
 using CoffeeHub.Models.DTOs.ScheduleDtos;
 using CoffeeHub.Models.DTOs.ShiftDtos;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 namespace CoffeeHub.Helpers;
 
@@ -33,9 +34,14 @@ public class MappingProfile : Profile
         CreateMap<Auth, AuthAddDto>();
         CreateMap<RegisterCustomerDto, Auth>();
 
+        CreateMap<Admin, AdminDto>();
+        CreateMap<AdminEditDto, Admin>();
+
         CreateMap<Employee, EmployeeDto>();
         CreateMap<EmployeeDto, Employee>();
         CreateMap<EmployeeAddDto, Employee>();
+        CreateMap<EmployeeUpdateDto, Employee>();
+        CreateMap<EmployeeBasicInforUpdateDto, Employee>();
 
         CreateMap<Customer, CustomerDto>();
         CreateMap<CustomerAddDto, Customer>();
@@ -90,5 +96,6 @@ public class MappingProfile : Profile
         CreateMap<ScheduleDto, Schedule>();
         CreateMap<ScheduleAddDto, Schedule>();
         CreateMap<ScheduleEditDto, Schedule>();
+        
     }
 }

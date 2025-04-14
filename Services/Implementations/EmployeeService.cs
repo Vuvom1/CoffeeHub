@@ -44,6 +44,21 @@ public class EmployeeService : BaseService<Employee>, IEmployeeService
         return _employeeRepository.GetAllWithScheduleAsync();
     }
 
+    public async Task UpdateBasicInforAsync(Guid id, Employee employee)
+    {
+        var employeeToUpdate = _employeeRepository.GetByIdAsync(id).Result;
+
+        employeeToUpdate.Name = employee.Name;
+        employeeToUpdate.ImageUrl = employee.ImageUrl;
+        employeeToUpdate.DateOfBirth = employee.DateOfBirth;
+        employeeToUpdate.PhoneNumber = employee.PhoneNumber;
+        employeeToUpdate.Address = employee.Address;
+
+        Console.WriteLine(employeeToUpdate.DateStartWork);   
+
+        await _employeeRepository.UpdateAsync(employeeToUpdate);
+    }
+
     public Task UpdateRoleAsync(Guid id, EmployeeRole role)
     {
         return _employeeRepository.UpdateRoleAsync(id, role);

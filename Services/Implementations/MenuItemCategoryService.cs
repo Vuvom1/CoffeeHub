@@ -17,4 +17,9 @@ public class MenuItemCategoryService : BaseService<MenuItemCategory>, IMenuItemC
     {
         return await _menuItemCategoryRepository.GetAllWithMenuItemsAsync();
     }
+
+    public Task<MenuItemCategory> GetByNameWithMenuItemsAsync(string name)
+    {
+        return _menuItemCategoryRepository.GetByNameWithMenuItemsAsync(name);
+    }
 }

@@ -133,6 +133,10 @@ public class AuthService : BaseService<Auth>, IAuthService
         {
             claims.Add(new Claim("id", user.Employee.Id.ToString()));
             claims.Add(new Claim("name", user.Employee.Name));
+            if (user.Employee.ImageUrl != null)
+            {
+                claims.Add(new Claim("imageUrl", user.Employee.ImageUrl.ToString()));
+            }
             claims.Add(new Claim("position", user.Employee.Role.ToString()));
             claims.Add(new Claim("address", user.Employee.Address.ToString()));
             claims.Add(new Claim("phoneNumber", user.Employee.PhoneNumber.ToString()));
@@ -140,11 +144,19 @@ public class AuthService : BaseService<Auth>, IAuthService
         {
             claims.Add(new Claim("id", user.Customer.Id.ToString()));
             claims.Add(new Claim("name", user.Customer.Name ?? throw new ArgumentNullException(nameof(user.Customer.Name))));
+            if (user.Customer.ImageUrl != null)
+            {
+                claims.Add(new Claim("imageUrl", user.Customer.ImageUrl.ToString()));
+            }
             claims.Add(new Claim("address", user.Customer.Address?.ToString() ?? throw new ArgumentNullException(nameof(user.Customer.Address))));
             claims.Add(new Claim("phoneNumber", user.Customer.PhoneNumber?.ToString() ?? throw new ArgumentNullException(nameof(user.Customer.PhoneNumber))));
         } else if (user.Role == UserRole.Admin)
         {
             claims.Add(new Claim("id", user.Admin.Id.ToString()));
+            if (user.Admin.ImageUrl != null)
+            {
+                claims.Add(new Claim("imageUrl", user.Admin.ImageUrl.ToString()));
+            }
             claims.Add(new Claim("name", user.Admin.Name ?? throw new ArgumentNullException(nameof(user.Admin.Name))));
         }
 

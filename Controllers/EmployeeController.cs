@@ -69,7 +69,7 @@ namespace CoffeeHub.Controllers
         }
 
         [HttpPut("{id}")]
-        
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(Guid id, [FromBody] EmployeeUpdateDto employeeUpdateDto)
         {
 
@@ -85,6 +85,19 @@ namespace CoffeeHub.Controllers
             await _employeeService.UpdateAsync(employee);
 
             return Ok("Employee updated successfully");
+        }
+
+        [HttpPut("{id}/updateBasicInfo")]
+        [Authorize(Roles = "Admin, Employee")]
+        public async Task<IActionResult> UpdateBasicInfo(Guid id, [FromBody] EmployeeBasicInforUpdateDto employeeBasicInfoUpdateDto)
+        {
+            var employee = _mapper.Map<Employee>(employeeBasicInfoUpdateDto);
+
+            _mapper.Map(employeeBasicInfoUpdateDto, employee);
+
+            await _employeeService.UpdateBasicInforAsync(id, employee);
+
+            return Ok("Employee basic info updated successfully");
         }
 
         [HttpPut("{id}/role")]

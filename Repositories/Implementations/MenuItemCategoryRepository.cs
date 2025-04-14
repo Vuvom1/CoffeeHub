@@ -14,4 +14,14 @@ public class MenuItemCategoryRepository(CoffeeHubContext context) : BaseReposito
     {
         return Task.FromResult(_context.MenuItemCategories.Include(x => x.MenuItems).AsEnumerable());
     }
+
+    public Task<MenuItemCategory> GetByNameWithMenuItemsAsync(string Name)
+    {
+        var menuItemCategory = _context.MenuItemCategories.Include(x => x.MenuItems).FirstOrDefault(x => x.Name == Name);
+        if (menuItemCategory == null)
+        {
+            throw new InvalidOperationException($"MenuItemCategory with name {Name} not found.");
+        }
+        return Task.FromResult(menuItemCategory);
+    }
 }

@@ -36,10 +36,15 @@ builder.Services.AddControllers()
     
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddDbContextFactory<CoffeeHubContext>(options => 
+builder.Services.AddDbContextFactory<CoffeeHubContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-           .ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning)), 
+           .ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning)); 
+    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+},
     ServiceLifetime.Scoped);
+
+builder.Services.AddScoped<GeminiService>();
+builder.Services.AddScoped<FunctionService>();
 
 builder.Services.AddScoped<IStatisticService, StatisticService>();
 
@@ -153,8 +158,6 @@ if (FirebaseApp.DefaultInstance == null)
         Credential = GoogleCredential.FromFile("Credentials/martialartconnect-firebase-adminsdk-mu8yn-209d5aa0b9.json")
     });
 }
-
-builder.Configuration.AddJsonFile("appsettings.Secrets.json", optional: true, reloadOnChange: true);
 
 var app = builder.Build();
 
