@@ -9,6 +9,7 @@ using CoffeeHub.Models.DTOs.DeliveryDtos;
 using CoffeeHub.Models.DTOs.EmployeeDtos;
 using CoffeeHub.Models.DTOs.IngredientCategoryDtos;
 using CoffeeHub.Models.DTOs.IngredientDtos;
+using CoffeeHub.Models.DTOs.IngredientExportOrderDtos;
 using CoffeeHub.Models.DTOs.IngredientStockDtos;
 using CoffeeHub.Models.DTOs.MenuItem;
 using CoffeeHub.Models.DTOs.MenuItemCategoryDtos;
@@ -19,6 +20,8 @@ using CoffeeHub.Models.DTOs.PromtionDtos;
 using CoffeeHub.Models.DTOs.RecipeDtos;
 using CoffeeHub.Models.DTOs.ScheduleDtos;
 using CoffeeHub.Models.DTOs.ShiftDtos;
+using CoffeeHub.Models.DTOs.TableBookingDtos;
+using CoffeeHub.Models.DTOs.TableDtos;
 
 namespace CoffeeHub.Helpers;
 
@@ -96,6 +99,20 @@ public class MappingProfile : Profile
         CreateMap<ScheduleDto, Schedule>();
         CreateMap<ScheduleAddDto, Schedule>();
         CreateMap<ScheduleEditDto, Schedule>();
+
+        CreateMap<Table, TableDto>();
+        CreateMap<TableDto, Table>();
+        CreateMap<AddTableDto, Table>();
+        CreateMap<UpdateTableDto, Table>();
+
+        CreateMap<TableBooking, TableBookingDto>();
+        CreateMap<TableBookingDto, TableBooking>();
+        CreateMap<AddTableBookingDto, TableBooking>();
+        CreateMap<UpdateTableBookingDto, TableBooking>();
+
+        CreateMap<IngredientExportOrder, IngredientExportOrderDto>();
+        CreateMap<IngredientExportOrderDto, IngredientExportOrder>();
+        CreateMap<AddIngredientExportOrderDto, IngredientExportOrder>();
         
     }
 }

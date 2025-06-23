@@ -11,10 +11,15 @@ public class MenuItemService : BaseService<MenuItem>, IMenuItemService
 {
     private readonly IMenuItemRepository _menuItemRepository;
     private readonly IRecipeRepository _recipeRepository;
-    public MenuItemService(IMenuItemRepository menuItemRepository, IRecipeRepository recipeRepository) : base(menuItemRepository)
+    private readonly IMenuItemHistoryRepository _menuItemHistoryRepository;
+    public MenuItemService(
+        IMenuItemRepository menuItemRepository, 
+        IRecipeRepository recipeRepository,
+        IMenuItemHistoryRepository menuItemHistoryRepository) : base(menuItemRepository)
     {
         _menuItemRepository = menuItemRepository;
         _recipeRepository = recipeRepository;
+        _menuItemHistoryRepository = menuItemHistoryRepository;
     }
 
     public async Task<MenuItem> UpdateMenuItemAvailabilityAsync(Guid id)
@@ -50,5 +55,35 @@ public class MenuItemService : BaseService<MenuItem>, IMenuItemService
     public async Task<MenuItem?> GetByNameAsync(string name)
     {
         return await _menuItemRepository.GetByNameAsync(name);
+    }
+
+    public override async Task UpdateAsync(MenuItem entity)
+    {
+        // Save the old menu item to history
+        var oldMenuItem = await _menuItemRepository.GetByIdAsync(entity.Id);
+        if (oldMenuItem != null)
+        {
+            var menuItemHistory = new MenuItemHistory
+            {
+                MenuItemId = oldMenuItem.Id,
+                Name = oldMenuItem.Name,
+                Description = oldMenuItem.Description,
+                Price = oldMenuItem.Price,
+                ImageUrl = oldMenuItem.ImageUrl,
+                IsAvailable = oldMenuItem.IsAvailable,
+                MenuItemCategoryId = oldMenuItem.MenuItemCategoryId,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+            await _menuItemHistoryRepository.AddAsync(menuItemHistory);
+        }
+
+        // Update the menu ite
+        await base.UpdateAsync(entity);
+    }
+
+    public async Task<IEnumerable<MenuItemHistory>> GetMenuItemHistoryAsync(Guid menuItemId)
+    {
+        return await _menuItemHistoryRepository.GetByMenuItemIdAsync(menuItemId);
     }
 }

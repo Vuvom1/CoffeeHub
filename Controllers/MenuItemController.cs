@@ -70,6 +70,15 @@ namespace CoffeeHub.Controllers
             return Ok(menuItemDtos);
         }
 
+        [HttpGet("history/{id}")]
+        // [Authorize(Roles = "Admin")]    
+        public async Task<IActionResult> GetHistories(Guid id)
+        {
+            var menuItemHistories = await _menuItemService.GetMenuItemHistoryAsync(id);
+
+            return Ok(menuItemHistories);
+        }
+
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromBody] MenuItemAddDto menuItemDto)

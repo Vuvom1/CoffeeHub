@@ -10,6 +10,7 @@ public class Ingredient : BaseEntity
     public string ImageUrl { get; set; } = null!;
     public UnitOfMeasurement UnitOfMeasurement { get; set; }
     public decimal TotalQuantity { get; set; }
+    public decimal ThresholdQuantity { get; set; }
     public Guid IngredientCategoryId { get; set; }
     public virtual IngredientCategory IngredientCategory { get; set; } = null!;
     public virtual ICollection<Recipe> Recipes { get; set; } = new HashSet<Recipe>();

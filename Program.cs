@@ -101,6 +101,17 @@ builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddScoped<IShiftRepository, ShiftRepository>();
 builder.Services.AddScoped<IShiftService, ShiftService>();
 
+builder.Services.AddScoped<ITableRepository, TableRepository>();
+builder.Services.AddScoped<ITableService, TableService>();  
+
+builder.Services.AddScoped<ITableBookingRepository, TableBookingRepository>();  
+builder.Services.AddScoped<ITableBookingService, TableBookingService>();
+
+builder.Services.AddScoped<IIngredientExportOrderRepository, IngredientExportOrderRepository>();
+builder.Services.AddScoped<IIngredientExportOrderService, IngredientExportOrderService>();
+
+builder.Services.AddScoped<IMenuItemHistoryRepository, MenuItemHistoryRepository>();
+
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -149,6 +160,14 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("BaristaOnly", policy => policy.RequireClaim("position", "Barista"));
     options.AddPolicy("WaiterOnly", policy => policy.RequireClaim("position", "Waiter"));
 });
+
+// builder.Services.AddSignalR().AddAzureSignalR(options =>
+// {
+//     options.ServerStickyMode = Microsoft.Azure.SignalR.ServerStickyMode.Required;
+//     options.ConnectionString = builder.Configuration["AzureSignalIR:ConnectionString"];
+// });
+
+//Config SMTP
 
 // Initialize Firebase Admin SDK if not already initialized
 if (FirebaseApp.DefaultInstance == null)

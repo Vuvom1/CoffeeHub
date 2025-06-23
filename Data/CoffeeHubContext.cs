@@ -31,6 +31,10 @@ public class CoffeeHubContext : IdentityDbContext<IdentityUser, IdentityRole, st
     public DbSet<IngredientStock> IngredientStocks { get; set; }    
     public DbSet<IngredientCategory> IngredientCategories { get; set; }
     public DbSet<Delivery> Deliveries { get; set; }
+    public DbSet<Table> Tables { get; set; }
+    public DbSet<TableBooking> TableBookings { get; set; }
+    public DbSet<MenuItemHistory> MenuItemHistories { get; set; }
+    public DbSet<IngredientExportOrder> IngredientExportOrders { get; set; }
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -57,6 +61,10 @@ public class CoffeeHubContext : IdentityDbContext<IdentityUser, IdentityRole, st
         modelBuilder.ApplyConfiguration(new IngredientStockConfig());
         modelBuilder.ApplyConfiguration(new IngredientCategoryConfig());
         modelBuilder.ApplyConfiguration(new DeliveryConfig());
+        modelBuilder.ApplyConfiguration(new TableConfiguration());
+        modelBuilder.ApplyConfiguration(new TableBookingConfiguration());
+        modelBuilder.ApplyConfiguration(new MenuIItemHistoryConfiguration());
+        modelBuilder.ApplyConfiguration(new IngredientExportOrderConfig());
 
         SeedData(modelBuilder);
     }

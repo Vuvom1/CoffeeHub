@@ -35,6 +35,16 @@ public class IngredientRepository : BaseRepository<Ingredient>, IIngredientRepos
         return Task.FromResult(ingredients);
     }
 
+    public Task<IEnumerable<Ingredient>> GetIngredientsWithLowStockAsync()
+    {
+        var ingredients = _context.Ingredients
+            .Where(i => i.TotalQuantity <= i.ThresholdQuantity)
+            .OrderBy(i => i.Name)
+            .AsEnumerable();
+
+        return Task.FromResult(ingredients);        
+    }
+
     public Task<IEnumerable<Ingredient>> GetIngredientsWithZeroStockAsync(int limit)
     {
         var ingredients = _context.Ingredients

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CoffeeHub.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -141,6 +141,22 @@ namespace CoffeeHub.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Tables",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Number = table.Column<int>(type: "int", nullable: false),
+                    Capacity = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tables", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -252,6 +268,7 @@ namespace CoffeeHub.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
                     MonthlySalary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -277,6 +294,7 @@ namespace CoffeeHub.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateOfBirth = table.Column<DateTime>(type: "date", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -304,6 +322,7 @@ namespace CoffeeHub.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
                     MonthlySalary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -335,6 +354,7 @@ namespace CoffeeHub.Migrations
                     ImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     UnitOfMeasurement = table.Column<int>(type: "int", maxLength: 50, nullable: false),
                     TotalQuantity = table.Column<decimal>(type: "decimal(18,2)", maxLength: 50, nullable: false, defaultValue: 0m),
+                    ThresholdQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     IngredientCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -356,6 +376,7 @@ namespace CoffeeHub.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    BarCode = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
@@ -371,6 +392,33 @@ namespace CoffeeHub.Migrations
                         name: "FK_MenuItems_MenuItemCategories_MenuItemCategoryId",
                         column: x => x.MenuItemCategoryId,
                         principalTable: "MenuItemCategories",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TableBookings",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BookingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Duration = table.Column<TimeOnly>(type: "time", nullable: false),
+                    NumberOfGuests = table.Column<int>(type: "int", nullable: false),
+                    CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CustomerPhone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CustomerEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    TableId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TableBookings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TableBookings_Tables_TableId",
+                        column: x => x.TableId,
+                        principalTable: "Tables",
                         principalColumn: "Id");
                 });
 
@@ -473,6 +521,38 @@ namespace CoffeeHub.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MenuItemHistories",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MenuItemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    IsAvailable = table.Column<bool>(type: "bit", nullable: false),
+                    MenuItemCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MenuItemHistories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MenuItemHistories_MenuItemCategories_MenuItemCategoryId",
+                        column: x => x.MenuItemCategoryId,
+                        principalTable: "MenuItemCategories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MenuItemHistories_MenuItems_MenuItemId",
+                        column: x => x.MenuItemId,
+                        principalTable: "MenuItems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Recipes",
                 columns: table => new
                 {
@@ -556,14 +636,36 @@ namespace CoffeeHub.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "IngredientExportOrders",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IngredientStockId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ExportReason = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    ExportDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IngredientExportOrders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_IngredientExportOrders_IngredientStocks_IngredientStockId",
+                        column: x => x.IngredientStockId,
+                        principalTable: "IngredientStocks",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.InsertData(
                 table: "Auths",
                 columns: new[] { "Id", "CreatedAt", "Email", "PasswordHash", "PasswordSalt", "Role", "UpdatedAt", "Username" },
                 values: new object[,]
                 {
-                    { new Guid("00000000-0000-0000-0000-000000000004"), new DateTime(2025, 3, 20, 23, 33, 47, 592, DateTimeKind.Local).AddTicks(6380), "admin@gmail.com", new byte[] { 243, 222, 175, 88, 211, 12, 246, 224, 142, 141, 95, 234, 85, 203, 2, 99, 120, 183, 249, 246, 252, 129, 110, 48, 17, 12, 134, 33, 159, 148, 204, 194, 162, 74, 9, 33, 155, 210, 135, 130, 148, 88, 4, 5, 108, 250, 22, 81, 84, 210, 47, 105, 4, 47, 216, 208, 32, 229, 111, 47, 0, 28, 242, 1 }, new byte[] { 233, 96, 197, 33, 182, 30, 71, 142, 224, 95, 197, 9, 206, 35, 147, 31, 219, 101, 144, 151, 167, 28, 92, 163, 1, 132, 228, 198, 160, 70, 242, 151, 198, 80, 143, 122, 66, 6, 0, 62, 171, 144, 126, 70, 234, 92, 140, 198, 192, 115, 218, 22, 128, 229, 166, 180, 124, 118, 103, 254, 62, 1, 61, 172, 33, 109, 1, 254, 91, 249, 186, 50, 252, 188, 231, 228, 206, 24, 97, 234, 167, 137, 123, 127, 188, 80, 89, 22, 184, 90, 203, 9, 87, 79, 141, 71, 75, 74, 98, 243, 119, 221, 7, 157, 11, 197, 108, 150, 171, 246, 117, 170, 75, 29, 5, 220, 134, 93, 87, 217, 98, 110, 245, 231, 151, 201, 157, 224 }, 0, new DateTime(2025, 3, 20, 23, 33, 47, 603, DateTimeKind.Local).AddTicks(4390), "admin" },
-                    { new Guid("00000000-0000-0000-0000-000000000005"), new DateTime(2025, 3, 20, 23, 33, 47, 603, DateTimeKind.Local).AddTicks(5590), "", new byte[] { 243, 222, 175, 88, 211, 12, 246, 224, 142, 141, 95, 234, 85, 203, 2, 99, 120, 183, 249, 246, 252, 129, 110, 48, 17, 12, 134, 33, 159, 148, 204, 194, 162, 74, 9, 33, 155, 210, 135, 130, 148, 88, 4, 5, 108, 250, 22, 81, 84, 210, 47, 105, 4, 47, 216, 208, 32, 229, 111, 47, 0, 28, 242, 1 }, new byte[] { 233, 96, 197, 33, 182, 30, 71, 142, 224, 95, 197, 9, 206, 35, 147, 31, 219, 101, 144, 151, 167, 28, 92, 163, 1, 132, 228, 198, 160, 70, 242, 151, 198, 80, 143, 122, 66, 6, 0, 62, 171, 144, 126, 70, 234, 92, 140, 198, 192, 115, 218, 22, 128, 229, 166, 180, 124, 118, 103, 254, 62, 1, 61, 172, 33, 109, 1, 254, 91, 249, 186, 50, 252, 188, 231, 228, 206, 24, 97, 234, 167, 137, 123, 127, 188, 80, 89, 22, 184, 90, 203, 9, 87, 79, 141, 71, 75, 74, 98, 243, 119, 221, 7, 157, 11, 197, 108, 150, 171, 246, 117, 170, 75, 29, 5, 220, 134, 93, 87, 217, 98, 110, 245, 231, 151, 201, 157, 224 }, 1, new DateTime(2025, 3, 20, 23, 33, 47, 603, DateTimeKind.Local).AddTicks(5590), "system" },
-                    { new Guid("00000000-0000-0000-0000-000000000006"), new DateTime(2025, 3, 20, 23, 33, 47, 603, DateTimeKind.Local).AddTicks(5600), "", new byte[] { 243, 222, 175, 88, 211, 12, 246, 224, 142, 141, 95, 234, 85, 203, 2, 99, 120, 183, 249, 246, 252, 129, 110, 48, 17, 12, 134, 33, 159, 148, 204, 194, 162, 74, 9, 33, 155, 210, 135, 130, 148, 88, 4, 5, 108, 250, 22, 81, 84, 210, 47, 105, 4, 47, 216, 208, 32, 229, 111, 47, 0, 28, 242, 1 }, new byte[] { 233, 96, 197, 33, 182, 30, 71, 142, 224, 95, 197, 9, 206, 35, 147, 31, 219, 101, 144, 151, 167, 28, 92, 163, 1, 132, 228, 198, 160, 70, 242, 151, 198, 80, 143, 122, 66, 6, 0, 62, 171, 144, 126, 70, 234, 92, 140, 198, 192, 115, 218, 22, 128, 229, 166, 180, 124, 118, 103, 254, 62, 1, 61, 172, 33, 109, 1, 254, 91, 249, 186, 50, 252, 188, 231, 228, 206, 24, 97, 234, 167, 137, 123, 127, 188, 80, 89, 22, 184, 90, 203, 9, 87, 79, 141, 71, 75, 74, 98, 243, 119, 221, 7, 157, 11, 197, 108, 150, 171, 246, 117, 170, 75, 29, 5, 220, 134, 93, 87, 217, 98, 110, 245, 231, 151, 201, 157, 224 }, 2, new DateTime(2025, 3, 20, 23, 33, 47, 603, DateTimeKind.Local).AddTicks(5600), "guest" }
+                    { new Guid("00000000-0000-0000-0000-000000000004"), new DateTime(2025, 5, 16, 12, 33, 36, 765, DateTimeKind.Local).AddTicks(7350), "admin@gmail.com", new byte[] { 243, 222, 175, 88, 211, 12, 246, 224, 142, 141, 95, 234, 85, 203, 2, 99, 120, 183, 249, 246, 252, 129, 110, 48, 17, 12, 134, 33, 159, 148, 204, 194, 162, 74, 9, 33, 155, 210, 135, 130, 148, 88, 4, 5, 108, 250, 22, 81, 84, 210, 47, 105, 4, 47, 216, 208, 32, 229, 111, 47, 0, 28, 242, 1 }, new byte[] { 233, 96, 197, 33, 182, 30, 71, 142, 224, 95, 197, 9, 206, 35, 147, 31, 219, 101, 144, 151, 167, 28, 92, 163, 1, 132, 228, 198, 160, 70, 242, 151, 198, 80, 143, 122, 66, 6, 0, 62, 171, 144, 126, 70, 234, 92, 140, 198, 192, 115, 218, 22, 128, 229, 166, 180, 124, 118, 103, 254, 62, 1, 61, 172, 33, 109, 1, 254, 91, 249, 186, 50, 252, 188, 231, 228, 206, 24, 97, 234, 167, 137, 123, 127, 188, 80, 89, 22, 184, 90, 203, 9, 87, 79, 141, 71, 75, 74, 98, 243, 119, 221, 7, 157, 11, 197, 108, 150, 171, 246, 117, 170, 75, 29, 5, 220, 134, 93, 87, 217, 98, 110, 245, 231, 151, 201, 157, 224 }, 0, new DateTime(2025, 5, 16, 12, 33, 36, 776, DateTimeKind.Local).AddTicks(6540), "admin" },
+                    { new Guid("00000000-0000-0000-0000-000000000005"), new DateTime(2025, 5, 16, 12, 33, 36, 776, DateTimeKind.Local).AddTicks(7760), "", new byte[] { 243, 222, 175, 88, 211, 12, 246, 224, 142, 141, 95, 234, 85, 203, 2, 99, 120, 183, 249, 246, 252, 129, 110, 48, 17, 12, 134, 33, 159, 148, 204, 194, 162, 74, 9, 33, 155, 210, 135, 130, 148, 88, 4, 5, 108, 250, 22, 81, 84, 210, 47, 105, 4, 47, 216, 208, 32, 229, 111, 47, 0, 28, 242, 1 }, new byte[] { 233, 96, 197, 33, 182, 30, 71, 142, 224, 95, 197, 9, 206, 35, 147, 31, 219, 101, 144, 151, 167, 28, 92, 163, 1, 132, 228, 198, 160, 70, 242, 151, 198, 80, 143, 122, 66, 6, 0, 62, 171, 144, 126, 70, 234, 92, 140, 198, 192, 115, 218, 22, 128, 229, 166, 180, 124, 118, 103, 254, 62, 1, 61, 172, 33, 109, 1, 254, 91, 249, 186, 50, 252, 188, 231, 228, 206, 24, 97, 234, 167, 137, 123, 127, 188, 80, 89, 22, 184, 90, 203, 9, 87, 79, 141, 71, 75, 74, 98, 243, 119, 221, 7, 157, 11, 197, 108, 150, 171, 246, 117, 170, 75, 29, 5, 220, 134, 93, 87, 217, 98, 110, 245, 231, 151, 201, 157, 224 }, 1, new DateTime(2025, 5, 16, 12, 33, 36, 776, DateTimeKind.Local).AddTicks(7760), "system" },
+                    { new Guid("00000000-0000-0000-0000-000000000006"), new DateTime(2025, 5, 16, 12, 33, 36, 776, DateTimeKind.Local).AddTicks(7770), "", new byte[] { 243, 222, 175, 88, 211, 12, 246, 224, 142, 141, 95, 234, 85, 203, 2, 99, 120, 183, 249, 246, 252, 129, 110, 48, 17, 12, 134, 33, 159, 148, 204, 194, 162, 74, 9, 33, 155, 210, 135, 130, 148, 88, 4, 5, 108, 250, 22, 81, 84, 210, 47, 105, 4, 47, 216, 208, 32, 229, 111, 47, 0, 28, 242, 1 }, new byte[] { 233, 96, 197, 33, 182, 30, 71, 142, 224, 95, 197, 9, 206, 35, 147, 31, 219, 101, 144, 151, 167, 28, 92, 163, 1, 132, 228, 198, 160, 70, 242, 151, 198, 80, 143, 122, 66, 6, 0, 62, 171, 144, 126, 70, 234, 92, 140, 198, 192, 115, 218, 22, 128, 229, 166, 180, 124, 118, 103, 254, 62, 1, 61, 172, 33, 109, 1, 254, 91, 249, 186, 50, 252, 188, 231, 228, 206, 24, 97, 234, 167, 137, 123, 127, 188, 80, 89, 22, 184, 90, 203, 9, 87, 79, 141, 71, 75, 74, 98, 243, 119, 221, 7, 157, 11, 197, 108, 150, 171, 246, 117, 170, 75, 29, 5, 220, 134, 93, 87, 217, 98, 110, 245, 231, 151, 201, 157, 224 }, 2, new DateTime(2025, 5, 16, 12, 33, 36, 776, DateTimeKind.Local).AddTicks(7770), "guest" }
                 });
 
             migrationBuilder.InsertData(
@@ -571,25 +673,25 @@ namespace CoffeeHub.Migrations
                 columns: new[] { "Id", "CreatedAt", "EndTime", "Name", "StartTime", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { new Guid("203945cd-7d82-48d9-8e23-54f810d4709d"), new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(6510), new TimeSpan(0, 18, 0, 0, 0), "Afternoon Shift", new TimeSpan(0, 12, 0, 0, 0), new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(6510) },
-                    { new Guid("bc774cbb-a6a4-4612-b8c0-991b80d74f04"), new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(6120), new TimeSpan(0, 12, 0, 0, 0), "Morning Shift", new TimeSpan(0, 6, 0, 0, 0), new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(6120) },
-                    { new Guid("d7d4295b-fdde-4b7e-8b61-98cde850c9e9"), new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(6520), new TimeSpan(0, 22, 0, 0, 0), "Evening Shift", new TimeSpan(0, 18, 0, 0, 0), new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(6520) }
+                    { new Guid("42b8d7a9-d8b8-4e9a-989b-90b82a821b0b"), new DateTime(2025, 5, 16, 12, 33, 36, 777, DateTimeKind.Local).AddTicks(5670), new TimeSpan(0, 18, 0, 0, 0), "Afternoon Shift", new TimeSpan(0, 12, 0, 0, 0), new DateTime(2025, 5, 16, 12, 33, 36, 777, DateTimeKind.Local).AddTicks(5670) },
+                    { new Guid("8137ca6f-c9fb-4587-991a-30e447c5c12f"), new DateTime(2025, 5, 16, 12, 33, 36, 777, DateTimeKind.Local).AddTicks(5680), new TimeSpan(0, 22, 0, 0, 0), "Evening Shift", new TimeSpan(0, 18, 0, 0, 0), new DateTime(2025, 5, 16, 12, 33, 36, 777, DateTimeKind.Local).AddTicks(5680) },
+                    { new Guid("cbad28ec-55db-4c0d-910d-2c7940e551ab"), new DateTime(2025, 5, 16, 12, 33, 36, 777, DateTimeKind.Local).AddTicks(5280), new TimeSpan(0, 12, 0, 0, 0), "Morning Shift", new TimeSpan(0, 6, 0, 0, 0), new DateTime(2025, 5, 16, 12, 33, 36, 777, DateTimeKind.Local).AddTicks(5290) }
                 });
 
             migrationBuilder.InsertData(
                 table: "Admins",
-                columns: new[] { "Id", "Address", "AuthId", "CreatedAt", "DateOfBirth", "MonthlySalary", "Name", "PhoneNumber", "UpdatedAt" },
-                values: new object[] { new Guid("00000000-0000-0000-0000-000000000003"), "Ho Chi Minh City", new Guid("00000000-0000-0000-0000-000000000004"), new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(5040), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0m, "Admin", "0000000000", new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(5050) });
+                columns: new[] { "Id", "Address", "AuthId", "CreatedAt", "DateOfBirth", "ImageUrl", "MonthlySalary", "Name", "PhoneNumber", "UpdatedAt" },
+                values: new object[] { new Guid("00000000-0000-0000-0000-000000000003"), "Ho Chi Minh City", new Guid("00000000-0000-0000-0000-000000000004"), new DateTime(2025, 5, 16, 12, 33, 36, 777, DateTimeKind.Local).AddTicks(4220), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0m, "Admin", "0000000000", new DateTime(2025, 5, 16, 12, 33, 36, 777, DateTimeKind.Local).AddTicks(4220) });
 
             migrationBuilder.InsertData(
                 table: "Customers",
-                columns: new[] { "Id", "Address", "AuthId", "CreatedAt", "CustomerLevel", "DateOfBirth", "IsAvailable", "Name", "PhoneNumber", "Point", "UpdatedAt" },
-                values: new object[] { new Guid("00000000-0000-0000-0000-000000000002"), "Ho Chi Minh City", new Guid("00000000-0000-0000-0000-000000000006"), new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(4040), 0, new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), true, "Guest", "0000000000", 0, new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(4040) });
+                columns: new[] { "Id", "Address", "AuthId", "CreatedAt", "CustomerLevel", "DateOfBirth", "ImageUrl", "IsAvailable", "Name", "PhoneNumber", "Point", "UpdatedAt" },
+                values: new object[] { new Guid("00000000-0000-0000-0000-000000000002"), "Ho Chi Minh City", new Guid("00000000-0000-0000-0000-000000000006"), new DateTime(2025, 5, 16, 12, 33, 36, 777, DateTimeKind.Local).AddTicks(3220), 0, new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, true, "Guest", "0000000000", 0, new DateTime(2025, 5, 16, 12, 33, 36, 777, DateTimeKind.Local).AddTicks(3220) });
 
             migrationBuilder.InsertData(
                 table: "Employees",
-                columns: new[] { "Id", "Address", "AuthId", "CreatedAt", "DateOfBirth", "DateStartWork", "MonthlySalary", "Name", "PhoneNumber", "Role", "UpdatedAt" },
-                values: new object[] { new Guid("00000000-0000-0000-0000-000000000001"), "Ho Chi Minh City", new Guid("00000000-0000-0000-0000-000000000005"), new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(2600), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0m, "Online System", "0000000000", 0, new DateTime(2025, 3, 20, 23, 33, 47, 604, DateTimeKind.Local).AddTicks(2610) });
+                columns: new[] { "Id", "Address", "AuthId", "CreatedAt", "DateOfBirth", "DateStartWork", "ImageUrl", "MonthlySalary", "Name", "PhoneNumber", "Role", "UpdatedAt" },
+                values: new object[] { new Guid("00000000-0000-0000-0000-000000000001"), "Ho Chi Minh City", new Guid("00000000-0000-0000-0000-000000000005"), new DateTime(2025, 5, 16, 12, 33, 36, 777, DateTimeKind.Local).AddTicks(1800), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0m, "Online System", "0000000000", 0, new DateTime(2025, 5, 16, 12, 33, 36, 777, DateTimeKind.Local).AddTicks(1800) });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Admins_AuthId",
@@ -655,6 +757,11 @@ namespace CoffeeHub.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_IngredientExportOrders_IngredientStockId",
+                table: "IngredientExportOrders",
+                column: "IngredientStockId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Ingredients_IngredientCategoryId",
                 table: "Ingredients",
                 column: "IngredientCategoryId");
@@ -663,6 +770,16 @@ namespace CoffeeHub.Migrations
                 name: "IX_IngredientStocks_IngredientId",
                 table: "IngredientStocks",
                 column: "IngredientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MenuItemHistories_MenuItemCategoryId",
+                table: "MenuItemHistories",
+                column: "MenuItemCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MenuItemHistories_MenuItemId",
+                table: "MenuItemHistories",
+                column: "MenuItemId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MenuItems_MenuItemCategoryId",
@@ -713,6 +830,11 @@ namespace CoffeeHub.Migrations
                 name: "IX_Schedules_ShiftId",
                 table: "Schedules",
                 column: "ShiftId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TableBookings_TableId",
+                table: "TableBookings",
+                column: "TableId");
         }
 
         /// <inheritdoc />
@@ -740,7 +862,10 @@ namespace CoffeeHub.Migrations
                 name: "Deliveries");
 
             migrationBuilder.DropTable(
-                name: "IngredientStocks");
+                name: "IngredientExportOrders");
+
+            migrationBuilder.DropTable(
+                name: "MenuItemHistories");
 
             migrationBuilder.DropTable(
                 name: "OrderDetails");
@@ -752,22 +877,31 @@ namespace CoffeeHub.Migrations
                 name: "Schedules");
 
             migrationBuilder.DropTable(
+                name: "TableBookings");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Orders");
+                name: "IngredientStocks");
 
             migrationBuilder.DropTable(
-                name: "Ingredients");
+                name: "Orders");
 
             migrationBuilder.DropTable(
                 name: "MenuItems");
 
             migrationBuilder.DropTable(
                 name: "Shifts");
+
+            migrationBuilder.DropTable(
+                name: "Tables");
+
+            migrationBuilder.DropTable(
+                name: "Ingredients");
 
             migrationBuilder.DropTable(
                 name: "Customers");
@@ -779,10 +913,10 @@ namespace CoffeeHub.Migrations
                 name: "Promotions");
 
             migrationBuilder.DropTable(
-                name: "IngredientCategories");
+                name: "MenuItemCategories");
 
             migrationBuilder.DropTable(
-                name: "MenuItemCategories");
+                name: "IngredientCategories");
 
             migrationBuilder.DropTable(
                 name: "Auths");

@@ -8,5 +8,6 @@ public class IngredientAddDto
     public string Description { get; set; } = null!;
     public string ImageUrl { get; set; } = null!;
     public string UnitOfMeasurement { get; set; } = null!;
+    public decimal ThresholdQuantity { get; set; }
     public required Guid IngredientCategoryId { get; set; }
 } 

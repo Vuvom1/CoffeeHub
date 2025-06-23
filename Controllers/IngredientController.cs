@@ -31,6 +31,16 @@ namespace CoffeeHub.Controllers
             return Ok(ingredientDtos);
         }
 
+        [HttpGet("low-stock")]
+        [Authorize(Roles = "Admin, Employee")]
+        public async Task<IActionResult> GetLowStockIngredients()
+        {
+            var lowStockIngredients = await _ingredientService.GetLowStockIngredientsAsync();
+            var lowStockIngredientDtos = _mapper.Map<IEnumerable<IngredientDto>>(lowStockIngredients);
+
+            return Ok(lowStockIngredientDtos);
+        }
+
         [HttpGet("{id}")]
         [Authorize(Roles = "Admin, Employee")]
         public async Task<IActionResult> GetById(Guid id)

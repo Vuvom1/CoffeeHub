@@ -21,6 +21,10 @@ public class MenuItemConfig : IEntityTypeConfiguration<MenuItem>
             .IsRequired()
             .HasMaxLength(100);
 
+        builder.Property(e => e.BarCode)
+            .HasMaxLength(50)
+            .IsRequired(false);
+
         builder.Property(e => e.Description)
             .IsRequired()
             .HasMaxLength(500);

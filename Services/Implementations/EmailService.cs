@@ -1,6 +1,7 @@
 using System;
+using System.Net;
+using System.Net.Mail;
 using System.Threading.Tasks;
-using Azure.Communication.Email;
 using Microsoft.Extensions.Configuration;
 using CoffeeHub.Services.Interfaces;
 
@@ -9,57 +10,67 @@ namespace CoffeeHub.Services;
 public class EmailService : IEmailService
 {
     private readonly IConfiguration _configuration;
+    private readonly string? _smtpHost;
+    private readonly int _smtpPort;
+    private readonly string? _smtpUsername;
+    private readonly string? _smtpPassword;
+    private readonly string? _fromEmail;
+    private readonly string? _fromName;
+    private readonly bool _enableSsl;
 
     public EmailService(IConfiguration configuration)
     {
         _configuration = configuration;
+        var smtpSettings = _configuration.GetSection("SmtpSettings");
+        _smtpHost = smtpSettings["Host"];
+        _smtpPort = int.Parse(smtpSettings["Port"] ?? "587");
+        _smtpUsername = smtpSettings["Username"];
+        _smtpPassword = smtpSettings["Password"];
+        _fromEmail = smtpSettings["FromEmail"];
+        _fromName = smtpSettings["FromName"];
+        _enableSsl = bool.Parse(smtpSettings["EnableSsl"] ?? "true");
     }
-
     public async Task SendEmailAsync(string toEmail, string subject, string message)
     {
-        var azureCommSettings = _configuration.GetSection("AzureCommunication");
-        var connectionString = azureCommSettings["ConnectionString"];
-        var fromEmail = azureCommSettings["FromEmail"];
-        var fromName = azureCommSettings["FromName"];
-
-        if (string.IsNullOrEmpty(connectionString))
+        if (string.IsNullOrEmpty(_smtpHost))
         {
-            throw new InvalidOperationException("Azure Communication Service connection string is not configured.");
+            throw new InvalidOperationException("SMTP host is not configured.");
         }
-
-        if (string.IsNullOrEmpty(fromEmail))
+        if (string.IsNullOrEmpty(_smtpUsername) || string.IsNullOrEmpty(_smtpPassword))
         {
-            throw new InvalidOperationException("FromEmail is not configured.");
+            throw new InvalidOperationException("SMTP credentials are not configured.");
         }
-
-        if (string.IsNullOrEmpty(fromName))
+        if (string.IsNullOrEmpty(_fromEmail))
         {
-            throw new InvalidOperationException("FromName is not configured.");
+            throw new InvalidOperationException("Sender email is not configured.");
         }
 
         try
         {
-            var emailClient = new EmailClient(connectionString);
-
-            var emailContent = new EmailContent(subject)
+            var smtpClient = new SmtpClient(_smtpHost)
             {
-                PlainText = message,
-                Html = message
+                Port = _smtpPort,
+                EnableSsl = _enableSsl,
+                UseDefaultCredentials = false, 
+                Credentials = new NetworkCredential(_smtpUsername, _smtpPassword)
             };
 
-            var emailMessage = new EmailMessage(fromEmail, toEmail, emailContent);
-
-            var sendResult = await emailClient.SendAsync(Azure.WaitUntil.Completed, emailMessage);
-
-            if (!sendResult.HasCompleted)
+            var mailMessage = new MailMessage
             {
-                throw new InvalidOperationException("Failed to send email.");
-            }
+                From = new MailAddress(_fromEmail, _fromName ?? string.Empty),
+                Subject = subject,
+                Body = message,
+                IsBodyHtml = true,
+            };
+            mailMessage.To.Add(toEmail);
+
+            await smtpClient.SendMailAsync(mailMessage);
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
             throw;
         }
+
     }
 }
